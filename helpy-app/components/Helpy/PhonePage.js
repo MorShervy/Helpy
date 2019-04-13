@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableHighlight, Picker, TextInput } from "react-native";
+import { LinearGradient } from 'expo';
 import LogoApp from './LogoApp'
 
 export default class PhonePage extends Component {
@@ -9,6 +10,7 @@ export default class PhonePage extends Component {
             areaCode: "054",
             phone: ""
         }
+
     }
 
     HandlePhoneChange = (phone) => {
@@ -16,53 +18,67 @@ export default class PhonePage extends Component {
     }
 
     render() {
+        console.log('code', this.state.areaCode);
+        console.log('phone-', this.state.phone)
         return (
-            <View style={styles.container}>
+            <View style={{ flex: 1 }}>
+                <LinearGradient
+                    colors={['#A0D9D9', '#68A6F0']}
+                    start={[0.1, 0.1]}
+                    style={{
+                        flex: 1,
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                    }}
+                >
+                    <View style={styles.container}>
 
-                <LogoApp />
+                        <LogoApp />
 
-                <Text style={styles.text}>הזן מספר טלפון</Text>
+                        <Text style={styles.text}>הזן מספר טלפון</Text>
 
-                <View style={styles.form}>
-                    <View style={styles.picker}>
-                        <Picker
-                            selectedValue={this.state.areaCode}
+                        <View style={styles.form}>
+                            <View style={styles.picker}>
+                                <Picker
+                                    selectedValue={this.state.areaCode}
 
-                            mode='dropdown'
-                            style={{ height: 50, width: 100 }}
-                            onValueChange={(itemValue) =>
-                                this.setState({ areaCode: itemValue })
-                            }>
-                            <Picker.Item label="054" value="054" />
-                            <Picker.Item label="058" value="058" />
-                            <Picker.Item label="055" value="055" />
-                            <Picker.Item label="053" value="053" />
-                            <Picker.Item label="052" value="052" />
-                            <Picker.Item label="050" value="050" />
-                            <Picker.Item label="057" value="057" />
+                                    mode='dropdown'
+                                    style={{ height: 50, width: 100 }}
+                                    onValueChange={(itemValue) =>
+                                        this.setState({ areaCode: itemValue })
+                                    }>
+                                    <Picker.Item label="054" value="054" />
+                                    <Picker.Item label="058" value="058" />
+                                    <Picker.Item label="055" value="055" />
+                                    <Picker.Item label="053" value="053" />
+                                    <Picker.Item label="052" value="052" />
+                                    <Picker.Item label="050" value="050" />
+                                    <Picker.Item label="057" value="057" />
 
-                        </Picker>
+                                </Picker>
+                            </View>
+                            <TextInput
+                                style={styles.input}
+                                onChangeText={this.HandlePhoneChange}
+                                value={this.state.phone}
+
+                                multiline={true}
+                                dataDetectorTypes='phoneNumber'
+                            ></TextInput>
+                        </View>
+                        <View style={styles.con}>
+
+                            <TouchableHighlight
+                                style={styles.button}
+                                onPress={this.onPressStart}>
+                                <Text style={{ color: 'white' }}>המשך</Text>
+                            </TouchableHighlight>
+
+                        </View>
                     </View>
-                    <TextInput
-                        style={styles.input}
-                        onChangeText={this.HandlePhoneChange}
-                        value={this.state.phone}
-
-                        multiline={true}
-                        dataDetectorTypes='phoneNumber'
-                    ></TextInput>
-                </View>
-                <View style={styles.con}>
-
-                    <TouchableHighlight
-                        style={styles.button}
-                        onPress={this.onPressStart}>
-                        <Text style={{ color: 'white' }}>המשך</Text>
-                    </TouchableHighlight>
-
-                </View>
+                </LinearGradient>
             </View>
-
         );
     }
 }
