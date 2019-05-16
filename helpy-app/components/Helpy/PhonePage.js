@@ -1,29 +1,86 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableHighlight, Picker, TextInput } from "react-native";
-import { LinearGradient } from 'expo';
+import { StyleSheet, Text, View, TouchableOpacity, Picker, TextInput, ActivityIndicator } from "react-native";
+import { LinearGradient, SMS } from 'expo';
 import LogoApp from './LogoApp'
 
+
 export default class PhonePage extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
             areaCode: "054",
-            phone: ""
+            phone: "",
+            isLoading: true,
+            dataSource: null,
         }
-
     }
 
-    HandlePhoneChange = (phone) => {
-        this.setState({ phone });
+    HandlePhoneChange = (value) => {
+        let p = value.replace(".", "");
+        let phone = p.replace("-", "");
+
+        if (p.length <= 7) {
+            this.setState({ phone });
+        }
+    }
+
+    btnCreatNewUserToDB = async () => {
+        console.log('states=', this.state.areaCode + this.state.phone);
+        const data = {
+            phone: this.state.areaCode + this.state.phone
+        }
+        console.log("data=", data)
+        console.log("data.phone=", data.phone)
+
+        /*      fetch from data base on local host - not working */
+
+        // fetch("", {
+        //     method: "post",
+        //     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+        //     body: JSON.stringify(data.phone)
+        // }).
+        //     then((res) => {
+        //         console.log('Done', res)
+        //         return res.json()
+        //     }).
+        //     then((result) => {
+        //         console.log("result=", result)
+        //         console.log("result.d=", result.d)
+        //         let u = JSON.parse(result.d)
+        //         console.log("u.ID=", u.ID)
+        //         console.log("u.Phone=", u.Phone)
+        //     }).catch((err) => {
+        //         console.log("error-post=", err)
+        //     })
+
+
+        this.props.navigation.navigate('CodeVerification');
     }
 
     render() {
-        console.log('code', this.state.areaCode);
-        console.log('phone-', this.state.phone)
+        {/*
+        if (this.state.isLoading) {
+
+            return (
+                <View>
+                    <ActivityIndicator />
+                </View>
+            )
+        } else {
+
+            let movies = this.state.dataSource.map((val, key) => {
+                return <View key={key} style={styles.movie}><Text>{val.title}</Text></View>
+            });
+
+            return (
+                <View>
+                    {movies}
+                </View>
+            ) */}
         return (
             <View style={{ flex: 1 }}>
                 <LinearGradient
-                    colors={['#A0D9D9', '#68A6F0']}
+                    colors={['#358FE2', '#2C0A8C']}
                     start={[0.1, 0.1]}
                     style={{
                         flex: 1,
@@ -33,18 +90,17 @@ export default class PhonePage extends Component {
                     }}
                 >
                     <View style={styles.container}>
-
                         <LogoApp />
-
-                        <Text style={styles.text}>הזן מספר טלפון</Text>
+                        <Text style={styles.headerText}>הזן מספר טלפון</Text>
 
                         <View style={styles.form}>
-                            <View style={styles.picker}>
+
+                            <View style={styles.pickerView}>
                                 <Picker
                                     selectedValue={this.state.areaCode}
-
                                     mode='dropdown'
-                                    style={{ height: 50, width: 100 }}
+                                    style={styles.picker}
+                                    itemStyle={styles.itemPicker}
                                     onValueChange={(itemValue) =>
                                         this.setState({ areaCode: itemValue })
                                     }>
@@ -58,80 +114,105 @@ export default class PhonePage extends Component {
 
                                 </Picker>
                             </View>
-                            <TextInput
-                                style={styles.input}
-                                onChangeText={this.HandlePhoneChange}
-                                value={this.state.phone}
+                            <View style={styles.phoneInputView}>
+                                <TextInput
+                                    maxLength={7}
+                                    keyboardType="numeric"
+                                    style={styles.textInput}
+                                    onChangeText={this.HandlePhoneChange}
+                                    value={this.state.phone}
+                                >
+                                </TextInput>
 
-                                multiline={true}
-                                dataDetectorTypes='phoneNumber'
-                            ></TextInput>
+                            </View>
+
                         </View>
-                        <View style={styles.con}>
-
-                            <TouchableHighlight
-                                style={styles.button}
-                                onPress={this.onPressStart}>
-                                <Text style={{ color: 'white' }}>המשך</Text>
-                            </TouchableHighlight>
-
+                        <View style={styles.btnSubmitView}>
+                            <TouchableOpacity
+                                style={styles.btnTH}
+                                onPress={this.btnCreatNewUserToDB}>
+                                <Text style={styles.submitText}>המשך</Text>
+                            </TouchableOpacity >
                         </View>
                     </View>
                 </LinearGradient>
             </View>
-        );
+        )
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
         marginBottom: 0,
         direction: 'rtl',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    text: {
+    headerText: {
         paddingBottom: 20,
         paddingTop: 50,
-        color: '#000000',
+        color: '#FFFEFE',
         fontSize: 18,
+        fontFamily: 'open-sans-light-italic',
     },
     form: {
-        flex: 1,
+        margin: 0,
+        padding: 0,
         flexDirection: 'row',
+        justifyContent: 'space-between',
+        height: 50,
+    },
+    pickerView: {
+        paddingTop: 3,
+        borderColor: '#FFFEFE',
+        borderRadius: 20,
+        borderWidth: 1,
+        paddingHorizontal: 10,
+        height: 40,
+        width: 112,
     },
     picker: {
-        borderRadius: 20,
-        borderWidth: 2,
+        color: '#FFFEFE',
+        height: 25,
         width: 100,
-        height: 50,
     },
-    input: {
+    itemPicker: {
+        textAlign: 'center',
+    },
+    phoneInputView: {
+        borderColor: '#FFFEFE',
         borderRadius: 20,
-        borderWidth: 2,
-        width: 250,
-        height: 50,
-        paddingTop: 2,
-        paddingBottom: 2,
+        borderWidth: 1,
+        width: 182,
+        height: 40,
     },
-    con: {
-        flex: 1,
+    textInput: {
+        paddingTop: 2,
+        color: '#FFFEFE',
+        width: 182,
+        height: 40,
+        fontSize: 16,
+        paddingHorizontal: 45,
+    },
+    btnSubmitView: {
         margin: 0,
         paddingTop: 50,
+        paddingBottom: 50,
         alignItems: 'center',
+        width: 120,
     },
-    button: {
+    btnTH: {
+        width: 120,
         padding: 14,
-        paddingTop: 10,
-        paddingRight: 30,
-        backgroundColor: '#000000',
+        paddingBottom: 5,
+        paddingTop: 5,
+        backgroundColor: '#FFFEFE',
         borderRadius: 20,
     },
     submitText: {
+        fontSize: 16,
+        color: 'black',
+        fontFamily: 'open-sans-light-italic',
         textAlign: 'center',
-        fontSize: 18,
-        color: 'white',
-    }
-}
-);
+    },
+});

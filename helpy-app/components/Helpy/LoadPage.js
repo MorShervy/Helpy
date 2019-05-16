@@ -1,42 +1,64 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableHighlight } from "react-native";
-import { LinearGradient } from 'expo';
+import { StyleSheet, Text, View, TouchableHighlight, Image } from "react-native";
+import { LinearGradient, Font } from 'expo';
 import LogoApp from './LogoApp'
 
 export default class LoadPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fontLoaded: false,
+    }
+  }
 
+  // componentDidMount() {
+  //   var timeOut = setTimeout(() => this.props.navigation.navigate('PhonePage'), 5000);
+  //   this.setState({ timeOut: timeOut });
+  // }
+
+  // componentWillUnmount() {
+  //   clearTimeout(this.state.timeOut);
+  // }
+
+  async componentDidMount() {
+    await Font.loadAsync({
+      'open-sans-light': require('../../assets/fonts/OpenSans-Light.ttf'),
+      'open-sans-light-italic': require('../../assets/fonts/OpenSans-LightItalic.ttf'),
+    });
+    this.setState({ fontLoaded: true })
+  }
 
   render() {
     return (
 
       <View style={{ flex: 1 }}>
         <LinearGradient
-          colors={['#A0D9D9', '#68A6F0']}
+          colors={["#358FE2", "#2C0A8C"]}
           start={[0.1, 0.1]}
           style={{
             flex: 1,
             left: 0,
             right: 0,
             top: 0,
-          }}
-        >
+          }}>
+
           <View style={styles.container}>
-
             <LogoApp />
+            <Text style={this.state.fontLoaded ? styles.headerText : null}>האפליקציה שעוזרת לך במצבי סיכון</Text>
 
-            <Text style={styles.text}>האפליקציה שעוזרת לך במצבי סיכון</Text>
-
-            <View style={styles.con}>
-
+            <View style={styles.btnView}>
               <TouchableHighlight
-                style={styles.button}
+                style={styles.btnTH}
                 onPress={() => { this.props.navigation.navigate('PhonePage'); }}>
-                <Text style={{ color: 'white' }}>כניסה</Text>
+                <Text style={this.state.fontLoaded ? styles.submitText : null}>כניסה</Text>
               </TouchableHighlight>
-
+              {/* <Image style={{ width: 47, height: 47 }} source={require('../../assets/loading1.gif')} /> */}
             </View>
+
           </View>
+
         </LinearGradient>
+
       </View >
     );
   }
@@ -50,29 +72,32 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: {
+  headerText: {
     paddingBottom: 20,
     paddingTop: 50,
-    color: '#000000',
+    color: '#FFFEFE',
     fontSize: 18,
+    fontFamily: 'open-sans-light-italic'
   },
-  con: {
+  btnView: {
     flex: 1,
     margin: 0,
     paddingTop: 50,
-    alignItems: 'center',
+    width: 120,
+
   },
-  button: {
-    padding: 14,
-    paddingTop: 10,
-    paddingRight: 30,
-    backgroundColor: '#000000',
+  btnTH: {
+    width: 120,
+    paddingBottom: 5,
+    paddingTop: 5,
+    backgroundColor: '#FFFEFE',
     borderRadius: 20,
+
   },
   submitText: {
+    fontSize: 16,
+    color: 'black',
+    fontFamily: 'open-sans-light-italic',
     textAlign: 'center',
-    fontSize: 18,
-    color: 'white',
   }
-}
-);
+});

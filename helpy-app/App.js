@@ -3,14 +3,13 @@ import { createStackNavigator, createAppContainer } from 'react-navigation';
 import { View } from 'react-native';
 import LoadPage from "./components/Helpy/LoadPage";
 import PhonePage from './components/Helpy/PhonePage';
+import CodeVerification from './components/Helpy/CodeVerification';
 
 class App extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
         <AppNavigator />
-
-
       </View>
     );
   }
@@ -18,9 +17,18 @@ class App extends Component {
 
 
 const AppNavigator = createStackNavigator({
+
   LoadPage: LoadPage,
   PhonePage: PhonePage,
+  CodeVerification: CodeVerification,
+
 },
+  {
+    headerMode: 'none',
+    defaultNavigationOptions: {
+      headerVisable: false,
+    }
+  },
   {
     initialRouteName: 'LoadPage',
   });
