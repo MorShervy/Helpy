@@ -1,15 +1,26 @@
 import React, { Component } from "react";
 import { StyleSheet, Animated, Text, View, TouchableOpacity, TextInput } from "react-native";
-import { LinearGradient } from 'expo';
+import { LinearGradient, Font } from 'expo';
 import LogoApp from './LogoApp'
 
 export default class CodeVerification extends Component {
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
         this.state = {
+            fontLoaded: false,
             areaCode: "054",
             phone: "",
+            latitude: 0.0,
+            longitude: 0.0,
         }
+    }
+
+    async componentWillMount() {
+        await Font.loadAsync({
+            'open-sans-light': require('../../assets/fonts/OpenSans-Light.ttf'),
+            'open-sans-light-italic': require('../../assets/fonts/OpenSans-LightItalic.ttf'),
+        });
+        this.setState({ fontLoaded: true })
     }
 
     HandlePhoneChange = (value) => {
@@ -19,6 +30,10 @@ export default class CodeVerification extends Component {
         if (p.length <= 4) {
             this.setState({ phone });
         }
+    }
+
+    btnVerificationPhone = () => {
+        this.props.navigation.navigate('MainApp');
     }
 
     render() {
@@ -37,7 +52,7 @@ export default class CodeVerification extends Component {
                     <View style={styles.container}>
 
                         <LogoApp />
-                        <Text style={styles.headerText}>הזן קוד</Text>
+                        <Text style={this.state.fontLoaded ? styles.headerText : styles.headerText2}>הזן קוד</Text>
 
                         <View style={styles.txtInputView}>
                             <TextInput
@@ -54,8 +69,8 @@ export default class CodeVerification extends Component {
                         <View style={styles.btnSubmitView}>
                             <TouchableOpacity
                                 style={styles.btnSubmitTH}
-                                onPress={() => { this.props.navigation.navigate('Loading'); }}>
-                                <Text style={styles.txtSubmit}>המשך</Text>
+                                onPress={this.btnVerificationPhone}>
+                                <Text style={this.state.fontLoaded ? styles.txtSubmit : styles.txtSubmit2}>המשך</Text>
                             </TouchableOpacity >
                         </View>
 
@@ -64,7 +79,7 @@ export default class CodeVerification extends Component {
                             <TouchableOpacity
                                 style={styles.btnCodeTH}
                                 onPress={() => { this.props.navigation.navigate('Loading'); }}>
-                                <Text style={styles.textButton}>שלח שנית</Text>
+                                <Text style={this.state.fontLoaded ? styles.textButton : styles.textButton2}>שלח שנית</Text>
                             </TouchableOpacity >
                         </View>
 
@@ -73,7 +88,7 @@ export default class CodeVerification extends Component {
                             <TouchableOpacity
                                 style={styles.btnCallTH}
                                 onPress={() => { this.props.navigation.navigate('Loading'); }}>
-                                <Text style={styles.textButton}>התקשרו כדי לקבל קוד בשיחה</Text>
+                                <Text style={this.state.fontLoaded ? styles.textButton : styles.textButton2}>התקשרו כדי לקבל קוד בשיחה</Text>
                             </TouchableOpacity >
                         </View>
                     </View>
@@ -96,6 +111,13 @@ const styles = StyleSheet.create({
         color: '#FFFEFE',
         fontSize: 18,
         fontFamily: 'open-sans-light-italic',
+        textAlign: 'center',
+    },
+    headerText2: {
+        paddingBottom: 20,
+        paddingTop: 50,
+        color: '#FFFEFE',
+        fontSize: 18,
         textAlign: 'center',
     },
     txtInputView: {
@@ -132,6 +154,11 @@ const styles = StyleSheet.create({
         fontFamily: 'open-sans-light-italic',
         textAlign: 'center',
     },
+    txtSubmit2: {
+        fontSize: 16,
+        color: 'black',
+        textAlign: 'center',
+    },
     btnView: {
         margin: 0,
         paddingTop: 20,
@@ -153,6 +180,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#FFFEFE',
         fontFamily: 'open-sans-light-italic',
+        textAlign: 'center',
+    },
+    textButton2: {
+        fontSize: 16,
+        color: '#FFFEFE',
         textAlign: 'center',
     },
 });

@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
+
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import { View } from 'react-native';
+
 import LoadPage from "./components/Helpy/LoadPage";
 import PhonePage from './components/Helpy/PhonePage';
 import CodeVerification from './components/Helpy/CodeVerification';
+import MainApp from './components/Helpy/MainApp';
 
 class App extends Component {
   render() {
@@ -20,6 +23,7 @@ const AppNavigator = createStackNavigator({
 
   LoadPage: LoadPage,
   PhonePage: PhonePage,
+  MainApp: MainApp,
   CodeVerification: CodeVerification,
 
 },

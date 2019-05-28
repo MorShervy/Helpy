@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Picker, TextInput, ActivityIndicator } from "react-native";
-import { LinearGradient, SMS } from 'expo';
+import { LinearGradient } from 'expo';
 import LogoApp from './LogoApp'
 
 
