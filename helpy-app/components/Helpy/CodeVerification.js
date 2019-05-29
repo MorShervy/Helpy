@@ -1,100 +1,163 @@
 import React, { Component } from "react";
-import { StyleSheet, Animated, Text, View, TouchableOpacity, TextInput } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { LinearGradient, Font } from 'expo';
+
 import LogoApp from './LogoApp'
 
 export default class CodeVerification extends Component {
     constructor(props) {
         super(props);
+        let user = this.props.navigation.state.params;
+        console.log('user=', user)
         this.state = {
             fontLoaded: false,
+            isCodeValid: false,
             areaCode: "054",
             phone: "",
-            latitude: 0.0,
-            longitude: 0.0,
         }
     }
 
     async componentWillMount() {
         await Font.loadAsync({
             'open-sans-light': require('../../assets/fonts/OpenSans-Light.ttf'),
-            'open-sans-light-italic': require('../../assets/fonts/OpenSans-LightItalic.ttf'),
         });
         this.setState({ fontLoaded: true })
     }
 
-    HandlePhoneChange = (value) => {
-        let p = value.replace(".", "");
-        let phone = p.replace("-", "");
+    componentDidMount = async () => {
+        let user = this.props.navigation.state.params;
+        let per = {
+            to: user.token,
+            title: user.phone,
+            body: `קוד זיהוי:  ${user.code}`,
+            badge: 3,
+            data: { token: user.token, phone: user.phone, code: user.code }
+        };
 
-        if (p.length <= 4) {
-            this.setState({ phone });
+        // POST adds a random id to the object sent
+        // fetch('https://exp.host/--/api/v2/push/send', {
+        //     method: 'POST',
+        //     body: JSON.stringify(per),
+        //     headers: {
+        //         "Content-type": "application/json; charset=UTF-8"
+        //     }
+        // })
+        //     .then(response => response.json())
+        //     .then(json => {
+        //         if (json != null) {
+        //             console.log(`
+        //             returned from server\n
+        //             json.data= ${JSON.stringify(json.data)}`);
+
+        //         } else {
+        //             console.log('err json');
+        //         }
+        //     });
+    }
+
+    handleCodeChange = (value) => {
+        let c = value.replace(".", "");
+        let code = c.replace("-", "");
+
+        if (c.length <= 4) {
+            this.setState({ code })
+        }
+
+        if (c.length === 4) {
+            this.setState({ isCodeValid: true })
+        }
+        else {
+            this.setState({ isCodeValid: false })
         }
     }
 
     btnVerificationPhone = () => {
-        this.props.navigation.navigate('MainApp');
+        this.props.navigation.navigate('Regulations');
     }
 
     render() {
-        return (
-            <View style={{ flex: 1 }}>
-                <LinearGradient
-                    colors={['#358FE2', '#2C0A8C']}
-                    start={[0.1, 0.1]}
-                    style={{
-                        flex: 1,
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                    }}
-                >
-                    <View style={styles.container}>
+        if (!this.state.fontLoaded) {
+            return (
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <LinearGradient
+                        colors={["#358FE2", "#2C0A8C"]}
+                        start={[0.1, 0.1]}
+                        style={{
+                            flex: 1,
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                        }}>
 
-                        <LogoApp />
-                        <Text style={this.state.fontLoaded ? styles.headerText : styles.headerText2}>הזן קוד</Text>
+                        <ActivityIndicator style={{ flex: 1 }} size="large" color="#ff0000" />
 
-                        <View style={styles.txtInputView}>
-                            <TextInput
-                                maxLength={4}
-                                keyboardType="numeric"
-                                style={styles.textInput}
-                                onChangeText={this.HandlePhoneChange}
-                                value={this.state.phone}
-                            >
-                            </TextInput>
+                    </LinearGradient>
+                </View>
+            );
+        }
+        else {
+            return (
+                <View style={{ flex: 1 }}>
+                    <LinearGradient
+                        colors={['#358FE2', '#2C0A8C']}
+                        start={[0.1, 0.1]}
+                        style={{
+                            flex: 1,
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                        }}
+                    >
+                        <View style={styles.container}>
+
+                            <LogoApp />
+                            <Text style={styles.headerText}>הזן קוד</Text>
+
+                            <View style={this.state.fontLoaded ? styles.headerText : styles.headerText2}>
+                                <TextInput
+                                    maxLength={4}
+                                    keyboardType="numeric"
+                                    style={[styles.textInput, this.state.isCodeValid ? styles.txtInputView : styles.codeInvalidInputView]}
+                                    onChangeText={this.handleCodeChange}
+                                    value={this.state.code}
+                                >
+                                </TextInput>
+                            </View>
+
+                            {/* submit button view */}
+                            <View style={styles.btnSubmitView}>
+                                <TouchableOpacity
+                                    style={styles.btnSubmitTH}
+                                    onPress={this.btnVerificationPhone}
+                                    disabled={this.state.isCodeValid ? false : true}
+                                >
+
+                                    <Text style={this.state.fontLoaded ? styles.txtSubmit : styles.txtSubmit2}>המשך</Text>
+                                </TouchableOpacity >
+                            </View>
+
+                            {/* get code again button view */}
+                            <View style={styles.btnView}>
+                                <TouchableOpacity
+                                    style={styles.btnCodeTH}
+                                    onPress={() => { this.props.navigation.navigate('Loading'); }}>
+                                    <Text style={this.state.fontLoaded ? styles.textButton : styles.textButton2}>שלח שנית</Text>
+                                </TouchableOpacity >
+                            </View>
+
+                            {/* get code via call button view */}
+                            <View style={styles.btnView}>
+                                <TouchableOpacity
+                                    style={styles.btnCallTH}
+                                    onPress={() => { this.props.navigation.navigate('Loading'); }}>
+                                    <Text style={this.state.fontLoaded ? styles.textButton : styles.textButton2}>התקשרו כדי לקבל קוד בשיחה</Text>
+                                </TouchableOpacity >
+                            </View>
                         </View>
-
-                        {/* submit button view */}
-                        <View style={styles.btnSubmitView}>
-                            <TouchableOpacity
-                                style={styles.btnSubmitTH}
-                                onPress={this.btnVerificationPhone}>
-                                <Text style={this.state.fontLoaded ? styles.txtSubmit : styles.txtSubmit2}>המשך</Text>
-                            </TouchableOpacity >
-                        </View>
-
-                        {/* get code again button view */}
-                        <View style={styles.btnView}>
-                            <TouchableOpacity
-                                style={styles.btnCodeTH}
-                                onPress={() => { this.props.navigation.navigate('Loading'); }}>
-                                <Text style={this.state.fontLoaded ? styles.textButton : styles.textButton2}>שלח שנית</Text>
-                            </TouchableOpacity >
-                        </View>
-
-                        {/* get code via call button view */}
-                        <View style={styles.btnView}>
-                            <TouchableOpacity
-                                style={styles.btnCallTH}
-                                onPress={() => { this.props.navigation.navigate('Loading'); }}>
-                                <Text style={this.state.fontLoaded ? styles.textButton : styles.textButton2}>התקשרו כדי לקבל קוד בשיחה</Text>
-                            </TouchableOpacity >
-                        </View>
-                    </View>
-                </LinearGradient>
-            </View>
-        );
+                    </LinearGradient>
+                </View>
+            );
+        }
     }
 }
 
@@ -106,22 +169,27 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     headerText: {
-        paddingBottom: 20,
-        paddingTop: 50,
+        paddingTop: 20,
         color: '#FFFEFE',
         fontSize: 18,
-        fontFamily: 'open-sans-light-italic',
+        fontFamily: 'open-sans-light',
         textAlign: 'center',
     },
     headerText2: {
-        paddingBottom: 20,
-        paddingTop: 50,
+        paddingTop: 20,
         color: '#FFFEFE',
         fontSize: 18,
         textAlign: 'center',
     },
     txtInputView: {
         borderColor: '#FFFEFE',
+        borderRadius: 20,
+        borderWidth: 1,
+        width: 182,
+        height: 40,
+    },
+    codeInvalidInputView: {
+        borderColor: '#FF0000',
         borderRadius: 20,
         borderWidth: 1,
         width: 182,
@@ -151,7 +219,7 @@ const styles = StyleSheet.create({
     txtSubmit: {
         fontSize: 16,
         color: 'black',
-        fontFamily: 'open-sans-light-italic',
+        fontFamily: 'open-sans-light',
         textAlign: 'center',
     },
     txtSubmit2: {
@@ -179,7 +247,7 @@ const styles = StyleSheet.create({
     textButton: {
         fontSize: 16,
         color: '#FFFEFE',
-        fontFamily: 'open-sans-light-italic',
+        fontFamily: 'open-sans-light',
         textAlign: 'center',
     },
     textButton2: {

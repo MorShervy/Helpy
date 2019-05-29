@@ -7,6 +7,8 @@ import LoadPage from "./components/Helpy/LoadPage";
 import PhonePage from './components/Helpy/PhonePage';
 import CodeVerification from './components/Helpy/CodeVerification';
 import MainApp from './components/Helpy/MainApp';
+import Regulations from './components/Helpy/Regulations';
+
 
 class App extends Component {
   render() {
@@ -25,7 +27,7 @@ const AppNavigator = createStackNavigator({
   PhonePage: PhonePage,
   MainApp: MainApp,
   CodeVerification: CodeVerification,
-
+  Regulations: Regulations
 },
   {
     headerMode: 'none',

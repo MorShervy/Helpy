@@ -5,7 +5,7 @@ export default class LogoApp extends Component {
     render() {
         return (
             <View style={styles.logo}>
-                <Image style={styles.image} source={require("../../assets/logo.png")} />
+                <Image style={styles.image} source={require("../../assets/icon.png")} />
             </View>
         )
     }

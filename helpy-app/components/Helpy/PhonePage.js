@@ -1,7 +1,12 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Picker, TextInput, ActivityIndicator } from "react-native";
-import { LinearGradient } from 'expo';
+import { LinearGradient, Notifications } from 'expo';
+import { NavigationActions } from 'react-navigation';
+
+import registerForPushNotificationsAsync from '../UserToken/registerForPushNotificationsAsync';
+
 import LogoApp from './LogoApp'
+
 
 
 export default class PhonePage extends Component {
@@ -10,73 +15,83 @@ export default class PhonePage extends Component {
         this.state = {
             areaCode: "054",
             phone: "",
-            isLoading: true,
-            dataSource: null,
+            fontLoaded: false,
+            isValidInput: false,
         }
     }
+
+    componentDidMount = () => {
+        registerForPushNotificationsAsync()
+            .then(tok => {
+                this.setState({ token: tok });
+                console.log(tok);
+            });
+        this._notificationSubscription = Notifications.addListener(this._handleNotification);
+        this.setState({ fontLoaded: true })
+    }
+
+    _handleNotification = (notification) => {
+        this.setState({ notification: notification });
+        let res = notification.data;
+
+        alert(`${res.phone} -- ${res.code}`);
+    };
 
     HandlePhoneChange = (value) => {
         let p = value.replace(".", "");
         let phone = p.replace("-", "");
 
+
         if (p.length <= 7) {
             this.setState({ phone });
         }
+        if (p.length === 7) {
+            this.setState({ isValidInput: true })
+        }
+        else {
+            this.setState({ isValidInput: false })
+        }
+
     }
 
-    btnCreatNewUserToDB = async () => {
-        console.log('states=', this.state.areaCode + this.state.phone);
+    btnOnSubmitPhone = async () => {
         const data = {
-            phone: this.state.areaCode + this.state.phone
+            token: this.state.token,
+            phone: this.state.areaCode + this.state.phone,
+            code: 1111,
         }
-        console.log("data=", data)
-        console.log("data.phone=", data.phone)
 
-        /*      fetch from data base on local host - not working */
+        const navigateAction = NavigationActions.navigate({
+            routeName: 'CodeVerification',
+            params: data,
+            action: NavigationActions.navigate({ routeName: 'PhonePage' }),
+        });
 
-        // fetch("", {
-        //     method: "post",
-        //     headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        //     body: JSON.stringify(data.phone)
-        // }).
-        //     then((res) => {
-        //         console.log('Done', res)
-        //         return res.json()
-        //     }).
-        //     then((result) => {
-        //         console.log("result=", result)
-        //         console.log("result.d=", result.d)
-        //         let u = JSON.parse(result.d)
-        //         console.log("u.ID=", u.ID)
-        //         console.log("u.Phone=", u.Phone)
-        //     }).catch((err) => {
-        //         console.log("error-post=", err)
-        //     })
+        this.props.navigation.dispatch(navigateAction);
 
-
-        this.props.navigation.navigate('CodeVerification');
     }
 
     render() {
-        {/*
-        if (this.state.isLoading) {
-
+        if (!this.state.fontLoaded) {
             return (
-                <View>
-                    <ActivityIndicator />
-                </View>
-            )
-        } else {
+                <View style={{ flex: 1, justifyContent: 'center' }}>
+                    <LinearGradient
+                        colors={["#358FE2", "#2C0A8C"]}
+                        start={[0.1, 0.1]}
+                        style={{
+                            flex: 1,
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                        }}>
 
-            let movies = this.state.dataSource.map((val, key) => {
-                return <View key={key} style={styles.movie}><Text>{val.title}</Text></View>
-            });
+                        <ActivityIndicator style={{ flex: 1 }} size="large" color="#ff0000" />
 
-            return (
-                <View>
-                    {movies}
+                    </LinearGradient>
                 </View>
-            ) */}
+            );
+        }
+
         return (
             <View style={{ flex: 1 }}>
                 <LinearGradient
@@ -114,7 +129,7 @@ export default class PhonePage extends Component {
 
                                 </Picker>
                             </View>
-                            <View style={styles.phoneInputView}>
+                            <View style={this.state.isValidInput ? styles.phoneInputView : styles.phoneInvalidInputView}>
                                 <TextInput
                                     maxLength={7}
                                     keyboardType="numeric"
@@ -130,7 +145,8 @@ export default class PhonePage extends Component {
                         <View style={styles.btnSubmitView}>
                             <TouchableOpacity
                                 style={styles.btnTH}
-                                onPress={this.btnCreatNewUserToDB}>
+                                disabled={this.state.isValidInput ? false : true}
+                                onPress={this.btnOnSubmitPhone}>
                                 <Text style={styles.submitText}>המשך</Text>
                             </TouchableOpacity >
                         </View>
@@ -140,6 +156,7 @@ export default class PhonePage extends Component {
         )
     }
 }
+
 
 const styles = StyleSheet.create({
     container: {
@@ -153,7 +170,7 @@ const styles = StyleSheet.create({
         paddingTop: 50,
         color: '#FFFEFE',
         fontSize: 18,
-        fontFamily: 'open-sans-light-italic',
+        fontFamily: 'open-sans-light',
     },
     form: {
         margin: 0,
@@ -186,6 +203,13 @@ const styles = StyleSheet.create({
         width: 182,
         height: 40,
     },
+    phoneInvalidInputView: {
+        borderColor: '#FF0000',
+        borderRadius: 20,
+        borderWidth: 1,
+        width: 182,
+        height: 40,
+    },
     textInput: {
         paddingTop: 2,
         color: '#FFFEFE',
@@ -212,7 +236,7 @@ const styles = StyleSheet.create({
     submitText: {
         fontSize: 16,
         color: 'black',
-        fontFamily: 'open-sans-light-italic',
+        fontFamily: 'open-sans-light',
         textAlign: 'center',
     },
 });
