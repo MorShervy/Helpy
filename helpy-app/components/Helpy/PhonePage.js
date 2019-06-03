@@ -105,7 +105,7 @@ export default class PhonePage extends Component {
                     }}
                 >
                     <View style={styles.container}>
-                        <LogoApp />
+                        <LogoApp styles={[styles.logo, styles.image]} />
                         <Text style={styles.headerText}>הזן מספר טלפון</Text>
 
                         <View style={styles.form}>
@@ -238,5 +238,13 @@ const styles = StyleSheet.create({
         color: 'black',
         fontFamily: 'open-sans-light',
         textAlign: 'center',
+    },
+    logo: {
+        alignItems: 'center',
+        paddingTop: 150,
+    },
+    image: {
+        width: 129,
+        height: 129,
     },
 });

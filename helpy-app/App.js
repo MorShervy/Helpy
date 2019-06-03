@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
-
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import { View } from 'react-native';
-
 import LoadPage from "./components/Helpy/LoadPage";
 import PhonePage from './components/Helpy/PhonePage';
 import CodeVerification from './components/Helpy/CodeVerification';
-import MainApp from './components/Helpy/MainApp';
 import Regulations from './components/Helpy/Regulations';
-
 
 class App extends Component {
   render() {
@@ -20,18 +16,17 @@ class App extends Component {
   }
 }
 
-
 const AppNavigator = createStackNavigator({
-
+  Regulations: Regulations,
   LoadPage: LoadPage,
   PhonePage: PhonePage,
-  MainApp: MainApp,
   CodeVerification: CodeVerification,
-  Regulations: Regulations
+
+
 },
   {
     headerMode: 'none',
-    defaultNavigationOptions: {
+    navigationOptions: {
       headerVisable: false,
     }
   },

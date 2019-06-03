@@ -59,15 +59,12 @@ export default class CodeVerification extends Component {
         let c = value.replace(".", "");
         let code = c.replace("-", "");
 
+
         if (c.length <= 4) {
             this.setState({ code })
-        }
-
-        if (c.length === 4) {
-            this.setState({ isCodeValid: true })
-        }
-        else {
-            this.setState({ isCodeValid: false })
+            if (c.length == 4) {
+                this.setState({ isCodeValid: true })
+            }
         }
     }
 
@@ -76,6 +73,7 @@ export default class CodeVerification extends Component {
     }
 
     render() {
+        console.log('isCode=', this.state.isCodeValid)
         if (!this.state.fontLoaded) {
             return (
                 <View style={{ flex: 1, justifyContent: 'center' }}>
@@ -110,7 +108,7 @@ export default class CodeVerification extends Component {
                     >
                         <View style={styles.container}>
 
-                            <LogoApp />
+                            <LogoApp styles={[styles.logo, styles.image]} />
                             <Text style={styles.headerText}>הזן קוד</Text>
 
                             <View style={this.state.fontLoaded ? styles.headerText : styles.headerText2}>
@@ -254,5 +252,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#FFFEFE',
         textAlign: 'center',
+    },
+    logo: {
+        alignItems: 'center',
+        paddingTop: 150,
+    },
+    image: {
+        width: 129,
+        height: 129,
     },
 });
