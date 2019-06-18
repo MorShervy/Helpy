@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import { View } from 'react-native';
-import LoadPage from "./components/Helpy/LoadPage";
-import PhonePage from './components/Helpy/PhonePage';
-import CodeVerification from './components/Helpy/CodeVerification';
-import Regulations from './components/Helpy/Regulations';
+import LoadPage from './components/Entry/LoadPage';
+import PhonePage from './components/Entry/PhonePage';
+import CodeVerification from './components/Entry/CodeVerification';
+import Regulations from './components/Regulations/Regulations';
+import MainApp from './components/MainApp/MainApp';
+import EventReport from './components/Reports/EventReport';
+import ReportType from './components/Reports/ReportType';
+import RealTime from './components/General/RealTime';
+import Chat from './components/LiveChat/Chat';
 
 class App extends Component {
   render() {
@@ -17,11 +22,16 @@ class App extends Component {
 }
 
 const AppNavigator = createStackNavigator({
-  Regulations: Regulations,
+  RealTime: RealTime,
   LoadPage: LoadPage,
   PhonePage: PhonePage,
   CodeVerification: CodeVerification,
+  Regulations: Regulations,
+  MainApp: MainApp,
+  ReportType: ReportType,
+  EventReport: EventReport,
 
+  Chat: Chat,
 
 },
   {
