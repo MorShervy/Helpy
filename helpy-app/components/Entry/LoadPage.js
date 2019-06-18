@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableHighlight, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import { LinearGradient, Font } from 'expo';
 
 import LogoApp from '../General/LogoApp';
@@ -58,11 +58,11 @@ export default class LoadPage extends Component {
               <Text style={this.state.fontLoaded ? styles.headerText : null}>האפליקציה שעוזרת לך במצבי סיכון</Text>
 
               <View style={styles.btnView}>
-                <TouchableHighlight
+                <TouchableOpacity
                   style={styles.btnTH}
                   onPress={() => { this.props.navigation.navigate('PhonePage'); }}>
                   <Text style={this.state.fontLoaded ? styles.submitText : null}>כניסה</Text>
-                </TouchableHighlight>
+                </TouchableOpacity>
               </View>
 
             </View>
