@@ -22,7 +22,7 @@ class App extends Component {
 }
 
 const AppNavigator = createStackNavigator({
-  RealTime: RealTime,
+
   LoadPage: LoadPage,
   PhonePage: PhonePage,
   CodeVerification: CodeVerification,
@@ -30,7 +30,7 @@ const AppNavigator = createStackNavigator({
   MainApp: MainApp,
   ReportType: ReportType,
   EventReport: EventReport,
-
+  RealTime: RealTime,
   Chat: Chat,
 
 },

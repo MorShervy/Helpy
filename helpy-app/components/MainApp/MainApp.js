@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, FlatList } from "react-native";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Image } from "react-native";
 import MenuButton from '../General/MenuButton';
 import ExistingReport from '../Reports/ExistingReprot';
 import LogoApp from '../General/LogoApp';
@@ -119,6 +119,7 @@ class MainApp extends Component {
                                         longitudeDelta: 0.0321,
                                     }}
                                 >
+
                                     <Marker
                                         coordinate={{
                                             latitude: this.state.latitude,
@@ -126,8 +127,11 @@ class MainApp extends Component {
                                         }}
                                         title='my place:)'
                                         description='here i am'
-                                    //image={require('../assets/icon.png')}
-                                    />
+                                    >
+                                        {/* <Image
+                                            style={{ height: 40, width: 40 }}
+                                            source={require('../../assets/images/buglery.png')} /> */}
+                                    </Marker>
                                 </MapView>
                             </View>
                         </View>

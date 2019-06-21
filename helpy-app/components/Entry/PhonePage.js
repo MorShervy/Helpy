@@ -2,59 +2,85 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Picker, TextInput, ActivityIndicator } from "react-native";
 import { LinearGradient, Notifications } from 'expo';
 import { NavigationActions } from 'react-navigation';
-
+import SQL from '../../Handlers/SQL';
+import { onLogin } from '../../actions/userAction';
+import { connect } from 'react-redux';
 import registerForPushNotificationsAsync from '../../Handlers/registerForPushNotificationsAsync';
 
 import LogoApp from '../General/LogoApp';
 
 
-
-export default class PhonePage extends Component {
+const regexNum = /^[0-9]*$/;
+class PhonePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
             areaCode: "054",
             phone: "",
-            fontLoaded: false,
-            isValidInput: false,
+            laoding: false,
+            flag: false,
         }
     }
 
-    componentDidMount = () => {
-        registerForPushNotificationsAsync()
-            .then(tok => {
-                this.setState({ token: tok });
-                console.log(tok);
-            });
-        this._notificationSubscription = Notifications.addListener(this._handleNotification);
-        this.setState({ fontLoaded: true })
-    }
+    // componentDidMount = async () => {
+    //     await registerForPushNotificationsAsync()
+    //         .then(tok => {
+    //             this.setState({ token: tok });
+    //             console.log(tok);
+    //         });
+    //     this._notificationSubscription = Notifications.addListener(this._handleNotification);
+    //     this.setState({ fontLoaded: true })
+    // }
 
     _handleNotification = (notification) => {
         this.setState({ notification: notification });
         let res = notification.data;
 
-        alert(`${res.phone} -- ${res.code}`);
+        //alert(`${res.phone} -- ${res.code}`);
     };
 
-    HandlePhoneChange = (value) => {
-        let p = value.replace(".", "");
-        let phone = p.replace("-", "");
+    _handleChange = (value) => {
+        this.setState({ phone: value },
+            () => {
+                if (this.state.phone.length > 6) {
+                    // valid phone length
+                    const phone = this.state.areaCode + this.state.phone;
+                    this._regexNumTest(phone);
 
-
-        if (p.length <= 7) {
-            this.setState({ phone });
-        }
-        if (p.length === 7) {
-            this.setState({ isValidInput: true })
-        }
-        else {
-            this.setState({ isValidInput: false })
-        }
-
+                }
+                else if (this.state.flag) {
+                    //console.log('invalid phone has changed from valid phone')
+                    this.setState({ flag: false })
+                }
+            });
     }
 
-    btnOnSubmitPhone = async () => {
+    _regexNumTest = (phone) => {
+        // phone number validation test
+        if (!((regexNum.test(phone) && (phone != "")))) {
+            //console.log('please enter a valid phone number');
+            //alert('please enter a valid phone number');
+            return;
+        }
+        //console.log('valid phone');
+        this.setState({ flag: true });
+    }
+
+    _handleRegisterAndLogin = async () => {
+
+        try {
+            this.setState({ loading: true });
+            const phone = this.state.areaCode + this.state.phone;
+            const userDetails = await SQL.UserExist(phone)
+            console.log(userDetails);
+            debugger;
+            this.props.onLogin(userDetails);
+        }
+        catch (error) {
+            this.setState({ loading: false })
+            console.log(error);
+        }
+
         const data = {
             token: this.state.token,
             phone: this.state.areaCode + this.state.phone,
@@ -67,30 +93,12 @@ export default class PhonePage extends Component {
             action: NavigationActions.navigate({ routeName: 'PhonePage' }),
         });
 
+        this.setState({ loading: false })
         this.props.navigation.dispatch(navigateAction);
 
     }
 
     render() {
-        if (!this.state.fontLoaded) {
-            return (
-                <View style={{ flex: 1, justifyContent: 'center' }}>
-                    <LinearGradient
-                        colors={["#358FE2", "#2C0A8C"]}
-                        start={[0.1, 0.1]}
-                        style={{
-                            flex: 1,
-                            left: 0,
-                            right: 0,
-                            top: 0,
-                        }}>
-
-                        <ActivityIndicator style={{ flex: 1 }} size="large" color="#ff0000" />
-
-                    </LinearGradient>
-                </View>
-            );
-        }
 
         return (
             <View style={{ flex: 1 }}>
@@ -106,7 +114,7 @@ export default class PhonePage extends Component {
                 >
                     <View style={styles.container}>
                         <LogoApp styles={[styles.logo, styles.image]} />
-                        <Text style={styles.headerText}>הזן מספר טלפון</Text>
+                        <Text style={styles.header}>הזן מספר טלפון</Text>
 
                         <View style={styles.form}>
 
@@ -129,12 +137,12 @@ export default class PhonePage extends Component {
 
                                 </Picker>
                             </View>
-                            <View style={this.state.isValidInput ? styles.phoneInputView : styles.phoneInvalidInputView}>
+                            <View style={this.state.flag ? styles.validInputView : styles.InvalidInputView}>
                                 <TextInput
                                     maxLength={7}
                                     keyboardType="numeric"
                                     style={styles.textInput}
-                                    onChangeText={this.HandlePhoneChange}
+                                    onChangeText={this._handleChange}
                                     value={this.state.phone}
                                 >
                                 </TextInput>
@@ -142,21 +150,28 @@ export default class PhonePage extends Component {
                             </View>
 
                         </View>
-                        <View style={styles.btnSubmitView}>
-                            <TouchableOpacity
-                                style={styles.btnTH}
-                                disabled={this.state.isValidInput ? false : true}
-                                onPress={this.btnOnSubmitPhone}>
-                                <Text style={styles.submitText}>המשך</Text>
-                            </TouchableOpacity >
-                        </View>
+
+                        {this.state.loading ? <ActivityIndicator style={{ flex: 1 }} size="large" color="#ff0000" /> :
+                            <View style={styles.buttonView}>
+                                <TouchableOpacity
+                                    style={styles.buttonOpacity}
+                                    disabled={this.state.flag ? false : true}
+                                    onPress={this._handleRegisterAndLogin}>
+                                    <Text style={styles.buttonText}>המשך</Text>
+                                </TouchableOpacity >
+                            </View>
+                        }
                     </View>
                 </LinearGradient>
             </View>
         )
     }
 }
+const mapDispatchToProps = (dispatch) => ({
+    onLogin: (userDetails) => dispatch(onLogin(userDetails))
+})
 
+export default connect(null, mapDispatchToProps)(PhonePage)
 
 const styles = StyleSheet.create({
     container: {
@@ -165,12 +180,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    headerText: {
+    header: {
         paddingBottom: 20,
         paddingTop: 50,
         color: '#FFFEFE',
         fontSize: 18,
-        fontFamily: 'open-sans-light',
     },
     form: {
         margin: 0,
@@ -196,14 +210,14 @@ const styles = StyleSheet.create({
     itemPicker: {
         textAlign: 'center',
     },
-    phoneInputView: {
+    validInputView: {
         borderColor: '#FFFEFE',
         borderRadius: 20,
         borderWidth: 1,
         width: 182,
         height: 40,
     },
-    phoneInvalidInputView: {
+    InvalidInputView: {
         borderColor: '#FF0000',
         borderRadius: 20,
         borderWidth: 1,
@@ -218,14 +232,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         paddingHorizontal: 45,
     },
-    btnSubmitView: {
+    buttonView: {
         margin: 0,
         paddingTop: 50,
         paddingBottom: 50,
         alignItems: 'center',
         width: 120,
     },
-    btnTH: {
+    buttonOpacity: {
         width: 120,
         padding: 14,
         paddingBottom: 5,
@@ -233,10 +247,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFEFE',
         borderRadius: 20,
     },
-    submitText: {
+    buttonText: {
         fontSize: 16,
         color: 'black',
-        fontFamily: 'open-sans-light',
         textAlign: 'center',
     },
     logo: {
