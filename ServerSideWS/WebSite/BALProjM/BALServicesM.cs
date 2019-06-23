@@ -67,9 +67,9 @@ namespace BALProjM
             return new JavaScriptSerializer().Serialize(error);
         }
 
-        public object RegisterAndLogin(string phone, string code, string token, string createdDate)
+        public object Register(string phone, string code, string token, string createdDate)
         {
-            DataTable result = DALServicesM.RegisterAndLogin(phone, code, token, createdDate);
+            DataTable result = DALServicesM.Register(phone, code, token, createdDate);
             if (result == null)
                 return null;
 
@@ -89,6 +89,33 @@ namespace BALProjM
             return new JavaScriptSerializer().Serialize(error);
         }
 
+        public object Login(string id, string code)
+        {
+            DataTable result = DALServicesM.Login(id, code);
+            if (result == null)
+                return null;
+
+            if (result.Columns.Count > 1)
+            {
+                User user = new User
+                {
+                    UserID = int.Parse(result.Rows[0]["UserID"].ToString()),
+                    Phone = result.Rows[0]["Phone"].ToString(),
+                    Code = result.Rows[0]["Code"].ToString(),
+                    Token = result.Rows[0]["Token"].ToString(),
+                    CreatedDate = result.Rows[0]["CreatedDate"].ToString(),
+                };
+                return new JavaScriptSerializer().Serialize(user);
+            }
+            var error = new { Error = result.Rows[0][0].ToString() };
+            return new JavaScriptSerializer().Serialize(error);
+        }
+
+
+        public static void UpdatePushNotificationToken(string phone, string token)
+        {
+            DALServicesM.UpdatePushNotificationToken(phone, token);
+        }
 
         public static string AdminLogin(string username, string password)
         {

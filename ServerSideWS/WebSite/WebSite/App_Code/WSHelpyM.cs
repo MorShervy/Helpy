@@ -34,17 +34,26 @@ public class WSHelpyM : System.Web.Services.WebService
     }
 
     [WebMethod]
-    public object RegisterAndLogin(string phone, string code, string token, string createdDate)
+    public object Register(string phone, string code, string token, string createdDate)
     {
-        return BALServicesM.Instance.RegisterAndLogin(phone, code, token, createdDate);
+        return BALServicesM.Instance.Register(phone, code, token, createdDate);
       
     }
 
+    [WebMethod]
+    public object Login(string id, string code)
+    {
+        return BALServicesM.Instance.Login(id, code);
+    }
+
+    [WebMethod]
+    public void UpdatePushNotificationToken(string phone,string token)
+    {
+        BALServicesM.UpdatePushNotificationToken(phone, token);
+    }
 
 
-
-
-
+    /*     old       */
 
     [WebMethod]
     public string AdminLogin(string username, string password)

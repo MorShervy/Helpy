@@ -15,6 +15,9 @@ storage.ide-shm
 *.userosscache
 *.sln.docstates
 Web.config
+App.config
+app.config
+
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

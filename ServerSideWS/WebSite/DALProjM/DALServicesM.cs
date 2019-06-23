@@ -78,7 +78,6 @@ namespace DALProjM
                 Con.Open();
                 _command = new SqlCommand($"UserExist", Con);
                 _command.CommandType = CommandType.StoredProcedure;
-                /* input parameter */
                 _command.Parameters.Add(new SqlParameter("Phone", phone));
                 _adtr = new SqlDataAdapter(_command);
 
@@ -100,21 +99,24 @@ namespace DALProjM
             return null;
         }
 
-        public static DataTable RegisterAndLogin(string phone, string code, string token, string createdDate)
+        public static DataTable Register(string phone, string code, string token, string createdDate)
         {
 
             try
             {
                 Con.Open();
-                _command = new SqlCommand($"RegisterAndLogin", Con);
+                _command = new SqlCommand($"Register", Con);
                 _command.CommandType = CommandType.StoredProcedure;
-                //_command.CommandText = "RegisterAndLogin";
 
                 /* input parameters */
                 _command.Parameters.Add(new SqlParameter("Phone", phone));
                 _command.Parameters.Add(new SqlParameter("Code", code));
                 _command.Parameters.Add(new SqlParameter("Token", token));
                 _command.Parameters.Add(new SqlParameter("CreatedDate", createdDate));
+                // return result par
+                //SqlParameter returnPar = new SqlParameter();
+                //returnPar.Direction = ParameterDirection.ReturnValue;
+                //_command.Parameters.Add(returnPar);
 
                 _adtr = new SqlDataAdapter(_command);
 
@@ -123,10 +125,7 @@ namespace DALProjM
 
                 if (ds.Tables["User"].Rows.Count != 0)
                     return ds.Tables["User"];
-                // return result par
-                //SqlParameter returnPar = new SqlParameter();
-                //returnPar.Direction = ParameterDirection.ReturnValue;
-                //comm.Parameters.Add(returnPar);
+
             }
             catch (Exception e)
             {
@@ -139,6 +138,65 @@ namespace DALProjM
             }
             return null;
         }
+
+        public static DataTable Login(string id, string code)
+        {
+            
+            try
+            {
+                int userId = int.Parse(id);
+                Con.Open();
+                _command = new SqlCommand($"Login", Con);
+                _command.CommandType = CommandType.StoredProcedure;
+
+                /* input parameters */
+                _command.Parameters.Add(new SqlParameter("UserID", userId));
+                _command.Parameters.Add(new SqlParameter("Code", code));
+                _adtr = new SqlDataAdapter(_command);
+
+                DataSet ds = new DataSet();
+                _adtr.Fill(ds, "User");
+
+                if (ds.Tables["User"].Rows.Count != 0)
+                    return ds.Tables["User"];
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                if (Con.State == ConnectionState.Open)
+                    Con.Close();
+            }
+            return null;
+        }
+
+        public static void UpdatePushNotificationToken(string phone, string token)
+        {
+            try
+            {
+                Con.Open();
+                _command = new SqlCommand($"UPDATE DTBusers SET Token = @Token WHERE Phone = @Phone", Con);
+                _command.Parameters.Add(new SqlParameter("@Token", token));
+                _command.Parameters.Add(new SqlParameter("@Phone", phone));
+
+                _command.ExecuteNonQuery();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                if (Con.State == ConnectionState.Open)
+                    Con.Close();
+            }
+
+        }
+
+
+
 
 
 
