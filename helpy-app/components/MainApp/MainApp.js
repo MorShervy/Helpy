@@ -1,10 +1,10 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Image } from "react-native";
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Image, ActivityIndicator } from "react-native";
 import MenuButton from '../General/MenuButton';
 import ExistingReport from '../Reports/ExistingReprot';
 import LogoApp from '../General/LogoApp';
 
-import { LinearGradient, MapView } from 'expo';
+import { LinearGradient, MapView, Location, Permissions } from 'expo';
 const { Marker } = MapView;
 
 
@@ -12,47 +12,31 @@ class MainApp extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            latitude: 0.0,
-            longitude: 0.0,
+            location: null,
+            loading: true,
         }
     }
 
     componentDidMount = async () => {
-        await navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const output =
-                    'latitude=' + position.coords.latitude +
-                    '\nlongitude=' + position.coords.longitude +
-                    '\naltitude=' + position.coords.altitude +
-                    //alert(output);
-                    this.setState(
-                        {
-                            latitude: position.coords.latitude,// +  Math.random()/1000,
-                            longitude: position.coords.longitude
-                        });
-            },
-            (error) => alert(error.message),
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-        );
+        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== 'granted') {
+            console.log('Permission to access location was denied')
+        }
+
+        const location = await Location.getCurrentPositionAsync({});
+        this.setState({ location }, async () => {
+            if (this.state.location) {
+                let reverseGC = await Location.reverseGeocodeAsync(this.state.location.coords);
+                console.log('reversGC=', reverseGC)
+                this.setState({ reverseGC: reverseGC, loading: false });
+            } else {
+                alert('You must push the Location button first in order to get the location before you can get the reverse geocode for the latitude and longitude!');
+            }
+        });
+
+
     }
 
-    getHomeLocation = async () => {
-        // let { status } = await Permissions.askAsync(Permissions.LOCATION);
-        // if (status !== 'granted') {
-        //     alert('Permission to access location was denied');
-        // }
-        // await Location.geocodeAsync((address) => {
-        //     const output =
-        //         'latitude=' + address.coords.latitude +
-        //         '\nlongitude=' + address.coords.longitude
-
-        //     console.log('Address.somthing', address)
-        // })
-        this.setState({
-            latitude: 32.332671,
-            longitude: 35.014287,
-        })
-    }
 
     getCurrentLocation = async () => {
         await navigator.geolocation.getCurrentPosition(
@@ -71,9 +55,11 @@ class MainApp extends Component {
             (error) => alert(error.message),
             { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
         );
+
     }
 
     render() {
+        console.log('reversGC=', this.state.reverseGC)
         return (
             <View style={{ flex: 1 }}>
 
@@ -87,25 +73,27 @@ class MainApp extends Component {
                         top: 0,
                     }}
                 >
-                    <ScrollView>
-                        <MenuButton />
-                        <LogoApp styles={[styles.logo, styles.image]} />
-                        <View style={styles.btnStatus}>
-                            <TouchableOpacity
-                                style={styles.btnSubmitTH2}
-                                onPress={() => { console.log('clicked') }}
 
-                            >
+                    <MenuButton />
+                    <LogoApp styles={[styles.logo, styles.image]} />
 
-                                <Text style={styles.txtSubmit3}>מצב דיווח</Text>
-                            </TouchableOpacity >
-                        </View>
+                    <View style={styles.btnStatus}>
+                        <TouchableOpacity
+                            style={styles.btnSubmitTH2}
+                            onPress={() => { console.log('clicked') }}
+
+                        >
+                            <Text style={styles.txtSubmit3}>מצב דיווח</Text>
+                        </TouchableOpacity >
+                    </View>
+                    {!this.state.location || this.state.loading ? <ActivityIndicator style={{ paddingTop: 150 }} size="large" color="#ff0000" /> :
                         <View style={styles.content}>
                             <View style={{
                                 borderColor: '#fff',
                                 borderWidth: 2,
                                 height: 300,
                             }}>
+
                                 <MapView
                                     style={{
                                         flex: 2,
@@ -113,8 +101,8 @@ class MainApp extends Component {
                                         height: 300,
                                     }}
                                     region={{
-                                        latitude: this.state.latitude,
-                                        longitude: this.state.longitude,
+                                        latitude: !this.state.location || this.state.location.coords.latitude,
+                                        longitude: !this.state.location || this.state.location.coords.longitude,
                                         latitudeDelta: 0.0322,
                                         longitudeDelta: 0.0321,
                                     }}
@@ -122,8 +110,8 @@ class MainApp extends Component {
 
                                     <Marker
                                         coordinate={{
-                                            latitude: this.state.latitude,
-                                            longitude: this.state.longitude
+                                            latitude: !this.state.location || this.state.location.coords.latitude,
+                                            longitude: !this.state.location || this.state.location.coords.longitude
                                         }}
                                         title='my place:)'
                                         description='here i am'
@@ -133,9 +121,11 @@ class MainApp extends Component {
                                             source={require('../../assets/images/buglery.png')} /> */}
                                     </Marker>
                                 </MapView>
+
                             </View>
                         </View>
-
+                    }
+                    {this.state.loading ||
                         <View style={styles.container}>
                             <Text style={styles.headerReport}>דיווחים קיימים</Text>
 
@@ -151,7 +141,7 @@ class MainApp extends Component {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    </ScrollView>
+                    }
                 </LinearGradient>
             </View>
         );

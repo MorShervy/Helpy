@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Image } from "react-native";
 export default function ExistingReport(props) {
     //console.log('props=', props.imgName);
     let sourceImg = `../../assets/images/${props.imgName}`;
-    console.log('sourceimg=', sourceImg);
+    //console.log('sourceimg=', sourceImg);
 
     return (
         <View style={styles.form}>
