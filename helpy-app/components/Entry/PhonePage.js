@@ -5,13 +5,13 @@ import { NavigationActions } from 'react-navigation';
 import SQL from '../../Handlers/SQL';
 import { onLogin } from '../../actions/userAction';
 import { connect } from 'react-redux';
-import registerForPushNotificationsAsync from '../../Handlers/registerForPushNotificationsAsync';
+import PushNotification from '../../Handlers/PushNotification';
 
 import LogoApp from '../General/LogoApp';
 
-
+const CODE = '1111';
 const regexNum = /^[0-9]*$/;
-class PhonePage extends Component {
+export default class PhonePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -21,23 +21,6 @@ class PhonePage extends Component {
             flag: false,
         }
     }
-
-    // componentDidMount = async () => {
-    //     await registerForPushNotificationsAsync()
-    //         .then(tok => {
-    //             this.setState({ token: tok });
-    //             console.log(tok);
-    //         });
-    //     this._notificationSubscription = Notifications.addListener(this._handleNotification);
-    //     this.setState({ fontLoaded: true })
-    // }
-
-    _handleNotification = (notification) => {
-        this.setState({ notification: notification });
-        let res = notification.data;
-
-        //alert(`${res.phone} -- ${res.code}`);
-    };
 
     _handleChange = (value) => {
         this.setState({ phone: value },
@@ -70,31 +53,61 @@ class PhonePage extends Component {
 
         try {
             this.setState({ loading: true });
-            const phone = this.state.areaCode + this.state.phone;
+            const phone = await this.state.areaCode + this.state.phone;
             const userDetails = await SQL.UserExist(phone)
-            console.log(userDetails);
-            debugger;
-            this.props.onLogin(userDetails);
+            //console.log('userDetails=', JSON.parse(userDetails));
+            const user = JSON.parse(userDetails);
+            console.log('user=', user)
+            //await this.props.onLogin(userDetails);
+            if (user.UserID !== undefined) {
+                console.log('user exist');
+                // update token in case it was changed from last time
+                //debugger;
+                const token = await PushNotification.UpdatePushNotificationToken(user.Phone, user.Token)
+                this.setState({
+                    token: token,
+                    userId: user.UserID,
+                    isUserExist: true
+                });
+            }
+            else {
+                console.log('user not exist');
+                // insert user 
+                const token = await PushNotification.Register();
+                //console.log('token=', token)
+
+                const newUser = await SQL.Register(phone, CODE, token, new Date().toString());
+                console.log('newUser=', newUser);
+                const u = JSON.parse(newUser);
+                console.log('u=', u)
+                this.setState({
+                    token: token,
+                    userId: u.UserID,
+                    isUserExist: false
+                });
+            }
+
+            await PushNotification.SendCodeByPushNotification(this.state.token, CODE)
+
+            const data = {
+                id: this.state.userId,
+                token: this.state.token,
+                isExist: this.state.isUserExist
+            }
+
+            const navigateAction = NavigationActions.navigate({
+                routeName: 'CodeVerification',
+                params: data,
+                action: NavigationActions.navigate({ routeName: 'PhonePage' }),
+            });
+
+            this.setState({ loading: false })
+            this.props.navigation.dispatch(navigateAction);
         }
         catch (error) {
             this.setState({ loading: false })
             console.log(error);
         }
-
-        const data = {
-            token: this.state.token,
-            phone: this.state.areaCode + this.state.phone,
-            code: 1111,
-        }
-
-        const navigateAction = NavigationActions.navigate({
-            routeName: 'CodeVerification',
-            params: data,
-            action: NavigationActions.navigate({ routeName: 'PhonePage' }),
-        });
-
-        this.setState({ loading: false })
-        this.props.navigation.dispatch(navigateAction);
 
     }
 
@@ -167,11 +180,11 @@ class PhonePage extends Component {
         )
     }
 }
-const mapDispatchToProps = (dispatch) => ({
-    onLogin: (userDetails) => dispatch(onLogin(userDetails))
-})
+// const mapDispatchToProps = (dispatch) => ({
+//     onLogin: (userDetails) => dispatch(onLogin(userDetails))
+// })
 
-export default connect(null, mapDispatchToProps)(PhonePage)
+//export default connect(null, mapDispatchToProps)(PhonePage)
 
 const styles = StyleSheet.create({
     container: {

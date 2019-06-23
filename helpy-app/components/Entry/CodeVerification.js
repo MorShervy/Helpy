@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { LinearGradient, Font } from 'expo';
-
+import SQL from '../../Handlers/SQL';
 import LogoApp from '../General/LogoApp';
 
+const regexNum = /^[0-9]*$/;
 export default class CodeVerification extends Component {
     constructor(props) {
         super(props);
-        let user = this.props.navigation.state.params;
+        //console.log('data=', this.props.navigation.state.params);
 
         this.state = {
             flag: false,
@@ -15,89 +16,56 @@ export default class CodeVerification extends Component {
         }
     }
 
-
-    componentDidMount = async () => {
-
-        //let user = this.props.navigation.state.params;
-        // let per = {
-        //     to: user.token,
-        //     title: user.phone,
-        //     body: `קוד זיהוי:  ${user.code}`,
-        //     badge: 3,
-        //     data: { token: user.token, phone: user.phone, code: user.code }
-        // };
-
-        //POST adds a random id to the object sent
-        // fetch('https://exp.host/--/api/v2/push/send', {
-        //     method: 'POST',
-        //     body: JSON.stringify(per),
-        //     headers: {
-        //         "Content-type": "application/json; charset=UTF-8"
-        //     }
-        // })
-        //     .then(response => response.json())
-        //     .then(json => {
-        //         if (json != null) {
-        //             console.log(`
-        //             returned from server\n
-        //             json.data= ${JSON.stringify(json.data)}`);
-
-        //         } else {
-        //             console.log('err json');
-        //         }
-        //     });
-    }
-
-    handleCodeChange = (value) => {
-        let c = value.replace(".", "");
-        let code = c.replace("-", "");
-
-
-        if (c.length <= 4) {
-            this.setState({ code })
-            if (c.length == 4) {
-                this.setState({ flag: true })
+    _handleCodeChange = (value) => {
+        this.setState({ code: value }, () => {
+            if (this.state.code.length > 3) {
+                this._regexNumTest(this.state.code);
+            } else if (this.state.flag) {
+                this.setState({ flag: false });
             }
-        }
+        })
     }
 
-    btnVerificationPhone = async () => {
-        let user = this.props.navigation.state.params;
-        let uData = {
-            phone: user.phone,
-            code: user.code,
-            UToken: user.token,
-            createdDate: new Date().toString()
+    _regexNumTest = (code) => {
+        // phone number validation test
+        if (!((regexNum.test(code) && (code != "")))) {
+            //console.log('please enter a valid phone number');
+            //alert('please enter a valid phone number');
+            return;
         }
+        //console.log('valid phone');
+        this.setState({ flag: true });
+    }
 
-        await fetch('http://ruppinmobile.tempdomain.co.il/site08/WSHelpyM.asmx/InsertUser', {
-            method: 'post',
-            headers: new Headers({
-                'Content-Type': 'application/json;',
-            }),
-            body: JSON.stringify(uData)
-        })
-            .then(res => {
-                console.log('res=', res);
-                return res.json()
-            })
-            .then(
-                (result) => {
-                    console.log("fetch POST= ", result);
-                    console.log("fetch POST.d= ", result.d);
-                    let u = JSON.parse(result.d);
-                    if (u != null) {
-                        console.log('u=', u)
-                        alert('yep');
-                    } else {
-                        alert('no such user!');
-                    }
 
-                },
-                (error) => {
-                    console.log("err post=", error);
-                });
-        this.props.navigation.navigate('Regulations');
+    _btnVerificationPhone = async () => {
+        const user = this.props.navigation.state.params;
+        console.log('user=', user)
+        const code = this.state.code;
+        try {
+            this.setState({ loading: true });
+            const u = await SQL.Login(user.id, code);
+            console.log('u=', u);
+            const res = JSON.parse(u);
+            if (res.UserID !== undefined) {
+                if (user.isExist) {
+                    console.log('main page')
+                    this.props.navigation.navigate('MainApp');
+                } else {
+                    console.log('regulation page')
+                    this.props.navigation.navigate('Regulations');
+                }
+            } else {
+                // invalid code
+                console.log('wrong code')
+            }
+
+        } catch (error) {
+            this.setState({ loading: false })
+            console.log(error);
+        }
+        this.setState({ loading: false })
+
     }
 
     render() {
@@ -124,23 +92,24 @@ export default class CodeVerification extends Component {
                                 maxLength={4}
                                 keyboardType="numeric"
                                 style={styles.textInput}
-                                onChangeText={this.handleCodeChange}
+                                onChangeText={this._handleCodeChange}
                                 value={this.state.code}
                             >
                             </TextInput>
                         </View>
 
                         {/* submit button view */}
-                        <View style={styles.buttonView}>
-                            <TouchableOpacity
-                                style={styles.buttonOpacity}
-                                onPress={this.btnVerificationPhone}
-                                disabled={this.state.flag ? false : true}
-                            >
-                                <Text style={styles.buttonText1}>המשך</Text>
-                            </TouchableOpacity >
-                        </View>
-
+                        {this.state.loading ? <ActivityIndicator style={{ flex: 1 }} size="large" color="#ff0000" /> :
+                            <View style={styles.buttonView}>
+                                <TouchableOpacity
+                                    style={styles.buttonOpacity}
+                                    onPress={this._btnVerificationPhone}
+                                    disabled={this.state.flag ? false : true}
+                                >
+                                    <Text style={styles.buttonText1}>המשך</Text>
+                                </TouchableOpacity >
+                            </View>
+                        }
                         {/* get code again button view */}
                         <View style={styles.btnView}>
                             <TouchableOpacity

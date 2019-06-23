@@ -6,6 +6,7 @@ import LogoApp from '../General/LogoApp';
 
 export default class LoadPage extends Component {
 
+
   render() {
 
     return (

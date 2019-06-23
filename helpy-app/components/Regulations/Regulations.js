@@ -38,7 +38,7 @@ class Regulations extends Component {
                                 {"\n"}{"\n"}
                             </Text>
                         </View>
-                        <View style={{ paddingTop: 50 }}>
+                        <View style={{ paddingTop: 50, borderRadius: 20 }}>
                             <CheckBox
                                 center
                                 iconRight
