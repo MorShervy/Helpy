@@ -5,6 +5,7 @@ import ExistingReport from '../Reports/ExistingReprot';
 import LogoApp from '../General/LogoApp';
 
 import { LinearGradient, MapView, Location, Permissions } from 'expo';
+import SQL from "../../Handlers/SQL";
 const { Marker } = MapView;
 
 
@@ -24,42 +25,26 @@ class MainApp extends Component {
         }
 
         const location = await Location.getCurrentPositionAsync({});
+        //console.log(location);
         this.setState({ location }, async () => {
             if (this.state.location) {
-                let reverseGC = await Location.reverseGeocodeAsync(this.state.location.coords);
-                console.log('reversGC=', reverseGC)
-                this.setState({ reverseGC: reverseGC, loading: false });
+                //let reverseGC = await Location.reverseGeocodeAsync(this.state.location.coords);
+                //console.log('reversGC=', reverseGC)
+                //this.setState({ reverseGC: reverseGC });
             } else {
                 alert('You must push the Location button first in order to get the location before you can get the reverse geocode for the latitude and longitude!');
             }
         });
 
-
-    }
-
-
-    getCurrentLocation = async () => {
-        await navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const output =
-                    'latitude=' + position.coords.latitude +
-                    '\nlongitude=' + position.coords.longitude +
-                    '\naltitude=' + position.coords.altitude +
-                    //alert(output);
-                    this.setState(
-                        {
-                            latitude: position.coords.latitude,// +  Math.random()/1000,
-                            longitude: position.coords.longitude
-                        });
-            },
-            (error) => alert(error.message),
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-        );
-
+        const Report = await SQL.GetDailyReportsByLocation(this.state.location.coords.latitude, this.state.location.coords.longitude);
+        //console.log("report=", Report);
+        const report = await JSON.parse(Report);
+        console.log("report=", report);
+        this.setState({ loading: false })
     }
 
     render() {
-        console.log('reversGC=', this.state.reverseGC)
+        //console.log('reversGC=', this.state.reverseGC)
         return (
             <View style={{ flex: 1 }}>
 
@@ -120,6 +105,7 @@ class MainApp extends Component {
                                             style={{ height: 40, width: 40 }}
                                             source={require('../../assets/images/buglery.png')} /> */}
                                     </Marker>
+
                                 </MapView>
 
                             </View>
@@ -129,8 +115,8 @@ class MainApp extends Component {
                         <View style={styles.container}>
                             <Text style={styles.headerReport}>דיווחים קיימים</Text>
 
-                            <ExistingReport imgName="buglery.png" />
-                            <ExistingReport imgName="fire.png" />
+                            <ExistingReport imgName="../../assets/images/buglery.png" />
+                            <ExistingReport imgName="../../assets/images/fire.png" />
 
                             <View style={styles.btnSubmitView}>
                                 <TouchableOpacity

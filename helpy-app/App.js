@@ -22,12 +22,12 @@ class App extends Component {
 }
 
 const AppNavigator = createStackNavigator({
-
+  MainApp: MainApp,
   LoadPage: LoadPage,
   PhonePage: PhonePage,
   CodeVerification: CodeVerification,
   Regulations: Regulations,
-  MainApp: MainApp,
+
   ReportType: ReportType,
   EventReport: EventReport,
   RealTime: RealTime,

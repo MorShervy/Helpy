@@ -102,5 +102,29 @@ export default class SQL {
         }
     } // END UpdatePushNotificationToken
 
+    static async GetDailyReportsByLocation(lat1, lon1) {
+        console.log("lat1=", lat1, " lon1=", lon1)
+        return new Promise(async (resolve, reject) => {
+            try {
+                const res = await fetch(`${URL}/GetDailyReportsByLocation`, {
+                    body: JSON.stringify({
+                        lat1,
+                        lon1
+                    }),
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    method: "POST"
+                });
+                console.log(`${URL}/GetDailyReportsByLocation`, res);
 
+                const data = await res.json();
+                if (data.d === null) reject('phone not exist');
+
+                resolve(data.d);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    } // END GetDailyReportsByLocation
 }
