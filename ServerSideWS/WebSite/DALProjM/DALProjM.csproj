@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Admin.cs" />
+    <Compile Include="Classes\DailyReport.cs" />
     <Compile Include="DALServicesM.cs" />
     <Compile Include="Classes\Location.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

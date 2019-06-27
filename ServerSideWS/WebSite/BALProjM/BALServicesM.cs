@@ -1,4 +1,5 @@
 ﻿using DALProjM;
+using DALProjM.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -51,7 +52,7 @@ namespace BALProjM
             if (result == null)
                 return null;
 
-            if(result.Columns.Count > 1)
+            if (result.Columns.Count > 1)
             {
                 User user = new User
                 {
@@ -73,7 +74,7 @@ namespace BALProjM
             if (result == null)
                 return null;
 
-            if(result.Columns.Count > 1)
+            if (result.Columns.Count > 1)
             {
                 User user = new User
                 {
@@ -109,6 +110,12 @@ namespace BALProjM
             }
             var error = new { Error = result.Rows[0][0].ToString() };
             return new JavaScriptSerializer().Serialize(error);
+        }
+
+        public object GetDailyReportsByLocation(string lat1, string lon1)
+        {
+            List<DailyReport> t = DALServicesM.GetDailyReportsByLocation(lat1, lon1);
+            return new JavaScriptSerializer().Serialize(t);
         }
 
 

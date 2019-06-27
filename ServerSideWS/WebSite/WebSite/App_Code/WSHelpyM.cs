@@ -52,6 +52,12 @@ public class WSHelpyM : System.Web.Services.WebService
         BALServicesM.UpdatePushNotificationToken(phone, token);
     }
 
+    [WebMethod]
+    public object GetDailyReportsByLocation(string lat1, string lon1)
+    {
+        return BALServicesM.Instance.GetDailyReportsByLocation(lat1, lon1);
+    }
+
 
     /*     old       */
 
