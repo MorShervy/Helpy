@@ -1,27 +1,30 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import Img from './Img';
+
+const { width, height } = Dimensions.get("window");
 
 export default function ExistingReport(props) {
-    //console.log('props=', props.imgName);
-    let sourceImg = `../../assets/images/${props.imgName}`;
-    //console.log('sourceimg=', sourceImg);
+    console.log('props=', props.report);
 
     return (
+
         <View style={styles.form}>
 
             <View style={styles.forms}>
                 <View style={styles.txtform}>
                     <Text style={styles.txtRight}>
-                        בחדרה ברחוב הנשיא בוצע שוד בבית עסק{"\n"}
-                        20:00
-                </Text>
+                        {props.report.Info}{"\n"}
+                        {`${props.report.Date} ${props.report.Time}`}
+                    </Text>
                 </View>
                 <View style={styles.picform}>
-                    <Image source={require('../../assets/images/buglery.png')} style={styles.img}></Image>
+                    <Img report={props.report} />
                 </View>
             </View>
 
         </View>
+
     );
 }
 
@@ -34,6 +37,7 @@ const styles = StyleSheet.create({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'flex-end',
+        width: width - 30,
         paddingBottom: 25,
 
     },
@@ -51,17 +55,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFEFE',
         borderRadius: 8,
         marginRight: 10,
-
+        width: 290,
         textAlign: 'center',
     },
     txtRight: {
         fontSize: 10,
         textAlign: 'right',
+        paddingTop: 5,
         paddingHorizontal: 8,
     },
-    img: {
-        width: 40,
-        height: 37,
 
-    },
 })

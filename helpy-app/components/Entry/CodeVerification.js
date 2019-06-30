@@ -1,15 +1,18 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
-import { LinearGradient, Font } from 'expo';
+import { LinearGradient } from 'expo';
+import { NavigationActions } from 'react-navigation';
+import PushNotification from '../../Handlers/PushNotification';
 import SQL from '../../Handlers/SQL';
 import LogoApp from '../General/LogoApp';
 
+const CODE = '1111';
 const regexNum = /^[0-9]*$/;
 export default class CodeVerification extends Component {
     constructor(props) {
         super(props);
         //console.log('data=', this.props.navigation.state.params);
-
+        alert('Check Push For Code');
         this.state = {
             flag: false,
             loading: false,
@@ -49,15 +52,24 @@ export default class CodeVerification extends Component {
             const res = JSON.parse(u);
             if (res.UserID !== undefined) {
                 if (user.isExist) {
-                    console.log('main page')
-                    this.props.navigation.navigate('MainApp');
+                    //console.log('main page')
+                    const navigateAction1 = NavigationActions.navigate({
+                        routeName: 'MainApp',
+                        params: res.UserID,
+                    });
+                    this.props.navigation.dispatch(navigateAction1);
                 } else {
-                    console.log('regulation page')
-                    this.props.navigation.navigate('Regulations');
+                    //console.log('regulation page')
+                    const navigateAction2 = NavigationActions.navigate({
+                        routeName: 'Regulations',
+                        params: res.UserID,
+                    });
+                    this.props.navigation.dispatch(navigateAction2);
                 }
             } else {
-                // invalid code
-                console.log('wrong code')
+                // invalid code needs to show messege to user
+                //console.log('wrong code')
+                alert('Wrong Code! Try Again...')
             }
 
         } catch (error) {
@@ -66,6 +78,12 @@ export default class CodeVerification extends Component {
         }
         this.setState({ loading: false })
 
+    }
+
+    _btnGetCodeByPushAgain = async () => {
+        const user = this.props.navigation.state.params;
+        await PushNotification.SendCodeByPushNotification(user.token, CODE);
+        alert('The Code Has Been Sent');
     }
 
     render() {
@@ -99,7 +117,7 @@ export default class CodeVerification extends Component {
                         </View>
 
                         {/* submit button view */}
-                        {this.state.loading ? <ActivityIndicator style={{ flex: 1 }} size="large" color="#ff0000" /> :
+                        {this.state.loading ? <ActivityIndicator style={{ flex: 1, paddingTop: 70 }} size="large" color="#ff0000" /> :
                             <View style={styles.buttonView}>
                                 <TouchableOpacity
                                     style={styles.buttonOpacity}
@@ -110,11 +128,12 @@ export default class CodeVerification extends Component {
                                 </TouchableOpacity >
                             </View>
                         }
-                        {/* get code again button view */}
+
+                        {/* get code again button view  needs to send push code again*/}
                         <View style={styles.btnView}>
                             <TouchableOpacity
                                 style={styles.btnCodeTH}
-                                onPress={() => { this.props.navigation.navigate('Loading'); }}>
+                                onPress={this._btnGetCodeByPushAgain}>
                                 <Text style={styles.buttonText2}>שלח שנית</Text>
                             </TouchableOpacity >
                         </View>

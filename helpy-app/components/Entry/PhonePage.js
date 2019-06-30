@@ -1,12 +1,9 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Picker, TextInput, ActivityIndicator } from "react-native";
-import { LinearGradient, Notifications } from 'expo';
+import { LinearGradient } from 'expo';
 import { NavigationActions } from 'react-navigation';
 import SQL from '../../Handlers/SQL';
-import { onLogin } from '../../actions/userAction';
-import { connect } from 'react-redux';
-import PushNotification from '../../Handlers/PushNotification';
-
+import PushNotification, { } from '../../Handlers/PushNotification';
 import LogoApp from '../General/LogoApp';
 
 const CODE = '1111';
@@ -32,7 +29,7 @@ export default class PhonePage extends Component {
 
                 }
                 else if (this.state.flag) {
-                    //console.log('invalid phone has changed from valid phone')
+                    //console.log('valid phone has changed to invalid phone')
                     this.setState({ flag: false })
                 }
             });
@@ -54,15 +51,15 @@ export default class PhonePage extends Component {
         try {
             this.setState({ loading: true });
             const phone = await this.state.areaCode + this.state.phone;
-            const userDetails = await SQL.UserExist(phone)
+            const userDetails = await SQL.UserExist(phone) //not an object yet
             //console.log('userDetails=', JSON.parse(userDetails));
-            const user = JSON.parse(userDetails);
+            const user = JSON.parse(userDetails); //return object now we can use user.
             console.log('user=', user)
             //await this.props.onLogin(userDetails);
             if (user.UserID !== undefined) {
-                console.log('user exist');
-                // update token in case it was changed from last time
-                //debugger;
+                //console.log('user exist');
+
+                // update token in case it was changed from last time asyncToken
                 const token = await PushNotification.UpdatePushNotificationToken(user.Phone, user.Token)
                 this.setState({
                     token: token,
@@ -71,7 +68,7 @@ export default class PhonePage extends Component {
                 });
             }
             else {
-                console.log('user not exist');
+                //console.log('user not exist');
                 // insert user 
                 const token = await PushNotification.Register();
                 //console.log('token=', token)
@@ -89,12 +86,14 @@ export default class PhonePage extends Component {
 
             await PushNotification.SendCodeByPushNotification(this.state.token, CODE)
 
+            // pass data to next page
             const data = {
                 id: this.state.userId,
                 token: this.state.token,
                 isExist: this.state.isUserExist
             }
 
+            // navigation action
             const navigateAction = NavigationActions.navigate({
                 routeName: 'CodeVerification',
                 params: data,
@@ -164,7 +163,7 @@ export default class PhonePage extends Component {
 
                         </View>
 
-                        {this.state.loading ? <ActivityIndicator style={{ flex: 1 }} size="large" color="#ff0000" /> :
+                        {this.state.loading ? <ActivityIndicator style={{ flex: 1, paddingTop: 70 }} size="large" color="#ff0000" /> :
                             <View style={styles.buttonView}>
                                 <TouchableOpacity
                                     style={styles.buttonOpacity}
@@ -180,11 +179,6 @@ export default class PhonePage extends Component {
         )
     }
 }
-// const mapDispatchToProps = (dispatch) => ({
-//     onLogin: (userDetails) => dispatch(onLogin(userDetails))
-// })
-
-//export default connect(null, mapDispatchToProps)(PhonePage)
 
 const styles = StyleSheet.create({
     container: {

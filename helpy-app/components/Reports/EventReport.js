@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Picker, TextInput, ActivityIndicator, Image } from "react-native";
-import { LinearGradient, Notifications } from 'expo';
+import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator, Image } from "react-native";
+import { LinearGradient, Location, Permissions } from 'expo';
 import { Button } from 'react-native-elements';
 import { NavigationActions } from 'react-navigation';
 
@@ -13,20 +13,33 @@ export default class EventReports extends Component {
     constructor(props) {
         super(props);
         this.state = {
-
-            text: ''
-
+            location: null,
+            reportInfo: ''
         }
     }
 
-    onPress = () => {
-        this.setState({
+    componentDidMount = async () => {
+        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== 'granted') {
+            console.log('Permission to access location was denied')
+        }
 
-        })
+        const location = await Location.getCurrentPositionAsync({});
+        //console.log(location);
+        this.setState({ location });
+    }
+
+    _handleInsertReport = () => {
+        // insert report
+        console.log('param=', this.props.navigation.state.params)
+        console.log('locatiot=', this.state.location.coords)
+        console.log('reportInfo=', this.state.reportInfo)
     }
 
 
     render() {
+
+
         return (
 
             <View style={{ flex: 1 }}>
@@ -54,8 +67,9 @@ export default class EventReports extends Component {
                                 maxLength={1000}
                                 placeholder='דווח כאן'
                                 textAlign='right'
-                                style={{ paddingHorizontal: 10, fontSize: 22 }}
-                                onChangeText={(text) => this.setState({ text })}
+                                style={{ color: '#fff', paddingHorizontal: 10, fontSize: 22 }}
+                                underlineColorAndroid='transparent'
+                                onChangeText={(reportInfo) => this.setState({ reportInfo })}
                                 value={this.state.text}
                             >
                             </TextInput>
@@ -66,7 +80,7 @@ export default class EventReports extends Component {
                             <View style={{ padding: 10 }}>
                                 <TouchableOpacity
                                     style={styles.button}
-                                    onPress={this.onPress}>
+                                    onPress={() => { console.log('mic clicked') }}>
 
                                     <Image
                                         source={require('../../assets/images/mic.png')}
@@ -79,7 +93,7 @@ export default class EventReports extends Component {
                             <View style={{ padding: 10 }}>
                                 <TouchableOpacity
                                     style={styles.button}
-                                    onPress={this.onPress}>
+                                    onPress={() => { console.log('image clicked') }}>
 
                                     <Image
                                         source={require('../../assets/images/image.png')}
@@ -93,9 +107,9 @@ export default class EventReports extends Component {
                         <View style={styles.btnSubmitView}>
                             <TouchableOpacity
                                 style={styles.btnTH}
-                                onPress={() => { this.props.navigation.navigate('RealTime') }}
+                                onPress={this._handleInsertReport}
                             >
-                                <Text style={styles.submitText}>הוסף דיווח</Text>
+                                <Text style={styles.submitText}>שלח דיווח!</Text>
                             </TouchableOpacity >
                         </View>
                     </View>
@@ -136,13 +150,12 @@ const styles = StyleSheet.create({
         padding: 14,
         paddingBottom: 5,
         paddingTop: 5,
-        backgroundColor: '#000000',
+        backgroundColor: '#FA0000',
         borderRadius: 20,
     },
     submitText: {
         fontSize: 16,
-        color: '#FFFEFE',
-
+        color: '#fff',
         textAlign: 'center',
     },
 

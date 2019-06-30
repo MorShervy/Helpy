@@ -39,6 +39,7 @@ export default class PushNotification {
 
     static async UpdatePushNotificationToken(phone, curToken) {
         const token = await this.Register();
+        // check if token has changed or not
         if (curToken != token)
             SQL.UpdatePushNotificationToken(phone, token);
         return token;

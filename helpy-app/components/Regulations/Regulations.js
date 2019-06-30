@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { LinearGradient } from 'expo';
+import { NavigationActions } from 'react-navigation';
 import { CheckBox } from 'react-native-elements'
 
 
@@ -10,9 +11,20 @@ import LogoApp from '../General/LogoApp';
 class Regulations extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
+            userId: this.props.navigation.state.params,
             checked: false,
         }
+    }
+
+    _handlePress = async () => {
+        const navigateAction = NavigationActions.navigate({
+            routeName: 'MainApp',
+            params: this.state.userId,
+        });
+
+        this.props.navigation.dispatch(navigateAction);
     }
     render() {
 
@@ -55,7 +67,7 @@ class Regulations extends Component {
                         <View style={styles.btnSubmitView}>
                             <TouchableOpacity
                                 style={styles.btnSubmitTH}
-                                onPress={() => { this.props.navigation.navigate('MainApp'); }}
+                                onPress={this._handlePress}
                                 disabled={this.state.checked ? false : true}
                             >
 

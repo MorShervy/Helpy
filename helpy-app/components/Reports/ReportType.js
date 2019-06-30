@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from 'expo';
+import { NavigationActions } from 'react-navigation';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 
 import MenuButton from '../General/MenuButton';
@@ -11,19 +12,32 @@ export default class ReportType extends React.Component {
         super(props);
 
         this.state = {
+            userId: this.props.navigation.state.params,
             types1: [{ label: 'מקרה של אחר', value: 0 }, { label: 'מקרה שלי', value: 1 }],
             value1: 1,
             value1Index: 1,
-            value1_1: 0,
-            value1_1Index: 0,
         }
     }
 
+    _handlePressReportType = async (reportTypeIdd) => {
+        //console.log('reportTypeIdd=', reportTypeIdd)
+        const data = {
+            userId: this.state.userId,
+            reportTypeId: reportTypeIdd,
+            isVictim: this.state.value1 // 0 equal false, 1 equal true equal SQL Server
+        }
 
+        const navigateAction = NavigationActions.navigate({
+            routeName: 'EventReport',
+            params: data,
+            action: NavigationActions.navigate({ routeName: 'ReportType' }),
+        });
+        this.props.navigation.dispatch(navigateAction)
+    }
 
     render() {
 
-
+        console.log('userId=', this.state.userId)
         return (
             <View style={{ flex: 1 }}>
                 <LinearGradient
@@ -43,7 +57,7 @@ export default class ReportType extends React.Component {
                         <View style={styles.component}>
                             <RadioForm formHorizontal={true} animation={true} >
                                 {this.state.types1.map((obj, i) => {
-                                    var onPress = (value, index) => {
+                                    var handlePress = (value, index) => {
                                         this.setState({
                                             value1: value,
                                             value1Index: index
@@ -55,7 +69,7 @@ export default class ReportType extends React.Component {
                                             <RadioButtonLabel
                                                 obj={obj}
                                                 index={i}
-                                                onPress={onPress}
+                                                onPress={handlePress}
                                                 labelStyle={{ color: '#fff' }}
                                                 labelWrapStyle={{}}
 
@@ -64,7 +78,7 @@ export default class ReportType extends React.Component {
                                                 obj={obj}
                                                 index={i}
                                                 isSelected={this.state.value1Index === i}
-                                                onPress={onPress}
+                                                onPress={handlePress}
                                                 buttonInnerColor={'#000'}
                                                 buttonOuterColor={'#fff'}
                                                 buttonSize={15}
@@ -80,14 +94,14 @@ export default class ReportType extends React.Component {
                         <View style={styles.types}>
                             <View style={styles.picone}>
                                 <TouchableOpacity
-                                    onPress={() => { this.props.navigation.navigate('EventReport') }}>
+                                    onPress={() => { this._handlePressReportType(5) }}>
                                     <Image source={require('../../assets/images/hitting.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.picone}>
                                 <TouchableOpacity
-                                    onPress={() => { this.props.navigation.navigate('EventReport') }}>
+                                    onPress={() => { this._handlePressReportType(1) }}>
                                     <Image source={require('../../assets/images/kidnapped.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
@@ -95,7 +109,7 @@ export default class ReportType extends React.Component {
                             <View style={styles.picone}>
                                 <TouchableOpacity
                                     style={{ width: 101, height: 95 }}
-                                    onPress={() => { this.props.navigation.navigate('EventReport') }}>
+                                    onPress={() => { this._handlePressReportType(6) }}>
                                     <Image source={require('../../assets/images/buglery.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
@@ -103,7 +117,7 @@ export default class ReportType extends React.Component {
                             <View style={styles.picone}>
                                 <TouchableOpacity
                                     style={{ width: 101, height: 95 }}
-                                    onPress={() => { this.props.navigation.navigate('EventReport') }}>
+                                    onPress={() => { this._handlePressReportType(2) }}>
                                     <Image source={require('../../assets/images/car-crash.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
@@ -111,7 +125,7 @@ export default class ReportType extends React.Component {
                             <View style={styles.picone}>
                                 <TouchableOpacity
                                     style={{ width: 101, height: 95 }}
-                                    onPress={() => { this.props.navigation.navigate('EventReport') }}>
+                                    onPress={() => { this._handlePressReportType(4) }}>
                                     <Image source={require('../../assets/images/heart.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
@@ -119,7 +133,7 @@ export default class ReportType extends React.Component {
                             <View style={styles.picone}>
                                 <TouchableOpacity
                                     style={{ width: 101, height: 95 }}
-                                    onPress={() => { this.props.navigation.navigate('EventReport') }}>
+                                    onPress={() => { this._handlePressReportType(3) }}>
                                     <Image source={require('../../assets/images/fire.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>

@@ -127,4 +127,36 @@ export default class SQL {
             }
         });
     } // END GetDailyReportsByLocation
+
+    static async InsertReport(userId, reportTypeId, reportDate, reportTime, lat, lon, isVictim, reportInfo) {
+
+        return new Promise(async (resolve, reject) => {
+            try {
+                const res = await fetch(`${URL}/InsertReport`, {
+                    body: JSON.stringify({
+                        userId,
+                        reportTypeId,
+                        reportDate,
+                        reportTime,
+                        lat,
+                        lon,
+                        isVictim,
+                        reportInfo
+                    }),
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    method: "POST"
+                });
+                console.log(`${URL}/InsertReport`, res);
+
+                const data = await res.json();
+                if (data.d === null) reject('phone not exist');
+
+                resolve(data.d);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    }
 }

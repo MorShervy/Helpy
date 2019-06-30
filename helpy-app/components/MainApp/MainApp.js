@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, ScrollView, Image, ActivityIndicator } from "react-native";
+import { NavigationActions } from 'react-navigation';
 import MenuButton from '../General/MenuButton';
 import ExistingReport from '../Reports/ExistingReprot';
+import ExistingReprotOnMap from '../Reports/ExistingReprotOnMap';
 import LogoApp from '../General/LogoApp';
+import SQL from "../../Handlers/SQL";
 
 import { LinearGradient, MapView, Location, Permissions } from 'expo';
-import SQL from "../../Handlers/SQL";
 const { Marker } = MapView;
 
 
@@ -13,12 +15,15 @@ class MainApp extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            userId: this.props.navigation.state.params,
             location: null,
             loading: true,
+            report: null,
         }
     }
 
     componentDidMount = async () => {
+        console.log('userid=', this.state.userId)
         let { status } = await Permissions.askAsync(Permissions.LOCATION);
         if (status !== 'granted') {
             console.log('Permission to access location was denied')
@@ -37,41 +42,88 @@ class MainApp extends Component {
         });
 
         const Report = await SQL.GetDailyReportsByLocation(this.state.location.coords.latitude, this.state.location.coords.longitude);
+
         //console.log("report=", Report);
         const report = await JSON.parse(Report);
         console.log("report=", report);
-        this.setState({ loading: false })
+        this.setState({
+            report: report,
+            loading: false
+        });
+    }
+
+    _handlePressAddReport = async () => {
+
+        const navigateAction = NavigationActions.navigate({
+            routeName: 'ReportType',
+            params: this.state.userId,
+        });
+        this.props.navigation.dispatch(navigateAction)
     }
 
     render() {
-        //console.log('reversGC=', this.state.reverseGC)
-        return (
-            <View style={{ flex: 1 }}>
 
-                <LinearGradient
-                    colors={['#358FE2', '#2C0A8C']}
-                    start={[0.1, 0.1]}
-                    style={{
-                        flex: 1,
-                        left: 0,
-                        right: 0,
-                        top: 0,
-                    }}
-                >
+        if (this.state.report == null || this.state.loading) {
+            return (
+                <View style={{ flex: 1 }}>
 
-                    <MenuButton />
-                    <LogoApp styles={[styles.logo, styles.image]} />
+                    <LinearGradient
+                        colors={['#358FE2', '#2C0A8C']}
+                        start={[0.1, 0.1]}
+                        style={{
+                            flex: 1,
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                        }}
+                    >
+                        <ActivityIndicator style={{ paddingTop: 150 }} size="large" color="#ff0000" />
+                    </LinearGradient>
+                </View>
+            )
+        }
 
-                    <View style={styles.btnStatus}>
-                        <TouchableOpacity
-                            style={styles.btnSubmitTH2}
-                            onPress={() => { console.log('clicked') }}
+        else {
+            //console.log('lat=', this.state.report[0])
+            const existingReport = this.state.report.map((r, id) => {
+                //console.log('r=', r);
+                return (
+                    <ExistingReport key={id} report={r} />
+                )
+            });
 
-                        >
-                            <Text style={styles.txtSubmit3}>מצב דיווח</Text>
-                        </TouchableOpacity >
-                    </View>
-                    {!this.state.location || this.state.loading ? <ActivityIndicator style={{ paddingTop: 150 }} size="large" color="#ff0000" /> :
+            const existingReprotOnMap = this.state.report.map((r, id) => {
+                return (
+                    <ExistingReprotOnMap key={id} report={r} />
+                )
+            });
+            return (
+                <View style={{ flex: 1 }}>
+
+                    <LinearGradient
+                        colors={['#358FE2', '#2C0A8C']}
+                        start={[0.1, 0.1]}
+                        style={{
+                            flex: 1,
+                            left: 0,
+                            right: 0,
+                            top: 0,
+                        }}
+                    >
+
+                        <MenuButton />
+                        <LogoApp styles={[styles.logo, styles.image]} />
+
+                        <View style={styles.btnStatus}>
+                            <TouchableOpacity
+                                style={styles.btnSubmitTH2}
+                                onPress={() => { console.log('clicked') }}
+
+                            >
+                                <Text style={styles.txtSubmit3}>מצב דיווח</Text>
+                            </TouchableOpacity >
+                        </View>
+
                         <View style={styles.content}>
                             <View style={{
                                 borderColor: '#fff',
@@ -86,51 +138,50 @@ class MainApp extends Component {
                                         height: 300,
                                     }}
                                     region={{
-                                        latitude: !this.state.location || this.state.location.coords.latitude,
-                                        longitude: !this.state.location || this.state.location.coords.longitude,
-                                        latitudeDelta: 0.0322,
-                                        longitudeDelta: 0.0321,
+                                        latitude: this.state.location.coords.latitude,
+                                        longitude: this.state.location.coords.longitude,
+                                        latitudeDelta: 0.00822,
+                                        longitudeDelta: 0.00821,
                                     }}
                                 >
 
                                     <Marker
                                         coordinate={{
-                                            latitude: !this.state.location || this.state.location.coords.latitude,
-                                            longitude: !this.state.location || this.state.location.coords.longitude
+                                            latitude: this.state.location.coords.latitude,
+                                            longitude: this.state.location.coords.longitude
                                         }}
                                         title='my place:)'
                                         description='here i am'
                                     >
-                                        {/* <Image
-                                            style={{ height: 40, width: 40 }}
-                                            source={require('../../assets/images/buglery.png')} /> */}
                                     </Marker>
-
+                                    {existingReprotOnMap}
                                 </MapView>
 
                             </View>
                         </View>
-                    }
-                    {this.state.loading ||
+
                         <View style={styles.container}>
                             <Text style={styles.headerReport}>דיווחים קיימים</Text>
 
-                            <ExistingReport imgName="../../assets/images/buglery.png" />
-                            <ExistingReport imgName="../../assets/images/fire.png" />
+                            <ScrollView style={{ height: 150, paddingTop: 12 }}>
+                                {existingReport}
+                            </ScrollView>
 
                             <View style={styles.btnSubmitView}>
                                 <TouchableOpacity
                                     style={styles.btnSubmitTH}
-                                    onPress={() => { this.props.navigation.navigate('ReportType') }}
+                                    onPress={this._handlePressAddReport}
                                 >
                                     <Text style={styles.txtSubmit2}>הוסף דיווח</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    }
-                </LinearGradient>
-            </View>
-        );
+
+                    </LinearGradient>
+                </View>
+
+            );
+        }
     }
 }
 export default MainApp;
@@ -158,11 +209,6 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         alignItems: 'center',
     },
-    txtSubmit2: {
-        fontSize: 16,
-        color: 'white',
-        textAlign: 'center',
-    },
     logo: {
         alignItems: 'center',
         paddingTop: 50,
@@ -182,12 +228,12 @@ const styles = StyleSheet.create({
         padding: 14,
         paddingBottom: 5,
         paddingTop: 5,
-        backgroundColor: '#FA0000',
+        backgroundColor: '#fff',
         borderRadius: 20,
     },
     txtSubmit2: {
         fontSize: 12,
-        color: 'white',
+        color: 'black',
         fontWeight: 'bold',
         textAlign: 'center',
     },
