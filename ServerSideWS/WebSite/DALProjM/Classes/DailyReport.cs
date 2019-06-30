@@ -9,8 +9,8 @@ namespace DALProjM.Classes
     public class DailyReport
     {
         public int ID { get; set; }
+        public int TypeID { get; set; }
         public string TypeName { get; set; }
-        public string Phone { get; set; }
         public string Date { get; set; }
         public string Time { get; set; }
         public double Latitude { get; set; }

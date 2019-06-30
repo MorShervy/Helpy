@@ -17,7 +17,7 @@ namespace DALProjM
         /// <summary>
         /// Statics Class Members
         /// </summary>
-        private static readonly double R_TO_CHECK = 1;
+        private static readonly double R_TO_CHECK = 1; //km
         private static readonly double R = 6371; //km
         private static string conStr = null;
         private static bool local = false;
@@ -231,6 +231,7 @@ namespace DALProjM
                         report.Add(new DailyReport()
                         {
                             ID = int.Parse(row["ReportID"].ToString()),
+                            TypeID = int.Parse(row["ReportTypeID"].ToString()),
                             TypeName = row["TypeName"].ToString(),
                             Date = row["ReportDate"].ToString(),
                             Time = row["ReportTime"].ToString(),
@@ -267,6 +268,42 @@ namespace DALProjM
                             Math.Cos((radLon1) - (radLon2))) * R;
 
             return diff <= R_TO_CHECK;
+        }
+
+        public static DataTable InsertReport(int userId, int reportTypeId, string reportDate, string reportTime, string lat, string lon, int isVictim, string reportInfo)
+        {
+            try
+            {
+                Con.Open();
+                _command = new SqlCommand("InsertReport", Con);
+                _command.CommandType = CommandType.StoredProcedure;
+                _command.Parameters.Add(new SqlParameter("UserID", userId));
+                _command.Parameters.Add(new SqlParameter("ReportTypeID", reportTypeId));
+                _command.Parameters.Add(new SqlParameter("ReportDate", reportDate));
+                _command.Parameters.Add(new SqlParameter("ReportTime", reportTime));
+                _command.Parameters.Add(new SqlParameter("Latitude", lat));
+                _command.Parameters.Add(new SqlParameter("Longitude", lon));
+                _command.Parameters.Add(new SqlParameter("IsVictim", isVictim));
+                _command.Parameters.Add(new SqlParameter("ReportInfo", reportInfo));
+
+                _adtr = new SqlDataAdapter(_command);
+
+                DataSet ds = new DataSet();
+                _adtr.Fill(ds, "Report");
+
+                if (ds.Tables["Report"].Rows.Count != 0)
+                    return ds.Tables["Report"];
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                if (Con.State == ConnectionState.Open)
+                    Con.Close();
+            }
+            return null;
         }
 
         /**************************************** old *****************************************/

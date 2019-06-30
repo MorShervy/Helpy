@@ -58,6 +58,11 @@ public class WSHelpyM : System.Web.Services.WebService
         return BALServicesM.Instance.GetDailyReportsByLocation(lat1, lon1);
     }
 
+    [WebMethod]
+    public object InsertReport(int userId, int reportTypeId, string reportDate, string reportTime,string lat,string lon,int isVictim, string reportInfo)
+    {
+        return BALServicesM.Instance.InsertReport(userId, reportTypeId, reportDate, reportTime, lat, lon, isVictim, reportInfo);
+    } 
 
     /*     old       */
 

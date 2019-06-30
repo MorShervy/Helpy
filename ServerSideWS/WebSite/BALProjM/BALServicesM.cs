@@ -108,14 +108,14 @@ namespace BALProjM
                 };
                 return new JavaScriptSerializer().Serialize(user);
             }
-            var error = new { Error = result.Rows[0][0].ToString() };
+            var error = new { Error = "something went wrong" };
             return new JavaScriptSerializer().Serialize(error);
         }
 
         public object GetDailyReportsByLocation(string lat1, string lon1)
         {
-            List<DailyReport> t = DALServicesM.GetDailyReportsByLocation(lat1, lon1);
-            return new JavaScriptSerializer().Serialize(t);
+            List<DailyReport> res = DALServicesM.GetDailyReportsByLocation(lat1, lon1);
+            return new JavaScriptSerializer().Serialize(res);
         }
 
 
@@ -123,6 +123,35 @@ namespace BALProjM
         {
             DALServicesM.UpdatePushNotificationToken(phone, token);
         }
+
+        public object InsertReport(int userId, int reportTypeId, string reportDate, string reportTime, string lat, string lon, int isVictim, string reportInfo)
+        {
+            DataTable result = DALServicesM.InsertReport(userId, reportTypeId, reportDate, reportTime, lat, lon, isVictim, reportInfo);
+
+            if (result == null)
+                return null;
+
+            if (result.Columns.Count > 1)
+            {
+                Report report = new Report
+                {
+                    ReportID = int.Parse(result.Rows[0]["ReportID"].ToString()),
+                    UserID = int.Parse(result.Rows[0]["UserID"].ToString()),
+                    ReportTypeID = int.Parse(result.Rows[0]["ReportTypeID"].ToString()),
+                    ReportDate = result.Rows[0]["ReportDate"].ToString(),
+                    ReportTime = result.Rows[0]["ReportTime"].ToString(),
+                    Latitude = result.Rows[0]["Latitude"].ToString(),
+                    Longitude = result.Rows[0]["Longitude"].ToString(),
+                    IsVictim = bool.Parse(result.Rows[0]["IsVictim"].ToString()),
+                    ReportInfo = result.Rows[0]["ReportInfo"].ToString()
+                };
+                return new JavaScriptSerializer().Serialize(report);
+            }
+            var error = new { Error = result.Rows[0][0].ToString() };
+            return new JavaScriptSerializer().Serialize(error);
+        }
+
+
 
         public static string AdminLogin(string username, string password)
         {
