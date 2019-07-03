@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { View } from "react-native";
 import Img from './Img';
 import { MapView } from 'expo';
 const { Marker } = MapView;

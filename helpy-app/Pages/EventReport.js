@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator, Image } from "react-native";
 import { LinearGradient, Location, Permissions } from 'expo';
-import { Button } from 'react-native-elements';
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 
-import MenuButton from '../General/MenuButton';
-import LogoApp from '../General/LogoApp';
-
+import SQL from '../Handlers/SQL';
+import MenuButton from '../components/MenuButton';
+import LogoApp from '../components/LogoApp';
+import Arrow from '../components/Arrow';
 
 export default class EventReports extends Component {
 
@@ -29,11 +29,26 @@ export default class EventReports extends Component {
         this.setState({ location });
     }
 
-    _handleInsertReport = () => {
+    _handleInsertReport = async () => {
+        const d = new Date();
         // insert report
-        console.log('param=', this.props.navigation.state.params)
-        console.log('locatiot=', this.state.location.coords)
-        console.log('reportInfo=', this.state.reportInfo)
+        const { userId, reportTypeId, isVictim } = this.props.navigation.state.params;
+        const location = this.state.location.coords;
+        const reportInfo = this.state.reportInfo;
+        const reportDate = d.toLocaleDateString();
+        const reportTime = d.toTimeString().substring(0, 8);
+
+        const res = await SQL.InsertReport(userId, reportTypeId, reportDate, reportTime, location.latitude, location.longitude, isVictim, reportInfo);
+        const report = JSON.parse(res);
+        // if (report.ReportID !== undefined)
+        //     console.log('report=', report)
+
+        const navigateAction = NavigationActions.navigate({
+            routeName: 'RealTime',
+            params: userId,
+        });
+        this.props.navigation.dispatch(navigateAction)
+
     }
 
 
@@ -58,8 +73,9 @@ export default class EventReports extends Component {
                     <View style={styles.container}>
 
                         <MenuButton />
-
                         <LogoApp styles={[styles.logo, styles.image]} />
+                        <Arrow handlePress={() => { this.props.navigation.navigate('MainApp') }} />
+
                         <Text style={styles.headerText}  >האירוע</Text>
                         <View style={styles.textInput}>
                             <TextInput
@@ -83,7 +99,7 @@ export default class EventReports extends Component {
                                     onPress={() => { console.log('mic clicked') }}>
 
                                     <Image
-                                        source={require('../../assets/images/mic.png')}
+                                        source={require('../assets/images/mic.png')}
                                         style={styles.ImageIconStyle}
 
                                     />
@@ -96,7 +112,7 @@ export default class EventReports extends Component {
                                     onPress={() => { console.log('image clicked') }}>
 
                                     <Image
-                                        source={require('../../assets/images/image.png')}
+                                        source={require('../assets/images/image.png')}
                                         style={styles.ImageIconStyle}
 
                                     />

@@ -5,8 +5,8 @@ import { NavigationActions } from 'react-navigation';
 import { CheckBox } from 'react-native-elements'
 
 
-import MenuButton from '../General/MenuButton';
-import LogoApp from '../General/LogoApp';
+import MenuButton from '../components/MenuButton';
+import LogoApp from '../components/LogoApp';
 
 class Regulations extends Component {
     constructor(props) {

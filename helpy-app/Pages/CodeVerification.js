@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { LinearGradient } from 'expo';
 import { NavigationActions } from 'react-navigation';
-import PushNotification from '../../Handlers/PushNotification';
-import SQL from '../../Handlers/SQL';
-import LogoApp from '../General/LogoApp';
+import PushNotification from '../Handlers/PushNotification';
+import SQL from '../Handlers/SQL';
+import LogoApp from '../components/LogoApp';
 
 const CODE = '1111';
 const regexNum = /^[0-9]*$/;
@@ -82,8 +82,8 @@ export default class CodeVerification extends Component {
 
     _btnGetCodeByPushAgain = async () => {
         const user = this.props.navigation.state.params;
-        await PushNotification.SendCodeByPushNotification(user.token, CODE);
-        alert('The Code Has Been Sent');
+        //await PushNotification.SendCodeByPushNotification(user.token, CODE);
+        //alert('The Code Has Been Sent');
     }
 
     render() {
@@ -103,13 +103,13 @@ export default class CodeVerification extends Component {
                     <View style={styles.container}>
 
                         <LogoApp styles={[styles.logo, styles.image]} />
-                        <Text style={styles.header}>הזן קוד</Text>
+                        <Text style={styles.txtHeader}>הזן קוד</Text>
 
                         <View style={this.state.flag ? styles.validInputView : styles.InvalidInputView}>
                             <TextInput
                                 maxLength={4}
                                 keyboardType="numeric"
-                                style={styles.textInput}
+                                style={styles.txtInput}
                                 onChangeText={this._handleCodeChange}
                                 value={this.state.code}
                             >
@@ -118,13 +118,13 @@ export default class CodeVerification extends Component {
 
                         {/* submit button view */}
                         {this.state.loading ? <ActivityIndicator style={{ flex: 1, paddingTop: 70 }} size="large" color="#ff0000" /> :
-                            <View style={styles.buttonView}>
+                            <View style={styles.submitView}>
                                 <TouchableOpacity
-                                    style={styles.buttonOpacity}
+                                    style={styles.btnSubmit}
                                     onPress={this._btnVerificationPhone}
                                     disabled={this.state.flag ? false : true}
                                 >
-                                    <Text style={styles.buttonText1}>המשך</Text>
+                                    <Text style={styles.txtSubmit}>המשך</Text>
                                 </TouchableOpacity >
                             </View>
                         }
@@ -132,18 +132,18 @@ export default class CodeVerification extends Component {
                         {/* get code again button view  needs to send push code again*/}
                         <View style={styles.btnView}>
                             <TouchableOpacity
-                                style={styles.btnCodeTH}
+                                style={styles.btnCode}
                                 onPress={this._btnGetCodeByPushAgain}>
-                                <Text style={styles.buttonText2}>שלח שנית</Text>
+                                <Text style={styles.txtButton}>שלח שנית</Text>
                             </TouchableOpacity >
                         </View>
 
                         {/* get code via call button view */}
                         <View style={styles.btnView}>
                             <TouchableOpacity
-                                style={styles.btnCallTH}
+                                style={styles.btnCall}
                                 onPress={() => { this.props.navigation.navigate('Loading'); }}>
-                                <Text style={styles.buttonText2}>התקשרו כדי לקבל קוד בשיחה</Text>
+                                <Text style={styles.txtButton}>התקשרו כדי לקבל קוד בשיחה</Text>
                             </TouchableOpacity >
                         </View>
                     </View>
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    header: {
+    txtHeader: {
         paddingBottom: 20,
         paddingTop: 50,
         color: '#FFFEFE',
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
         width: 182,
         height: 40,
     },
-    textInput: {
+    txtInput: {
         paddingTop: 2,
         color: '#FFFEFE',
         width: 182,
@@ -188,14 +188,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         paddingHorizontal: 67,
     },
-    buttonView: {
+    submitView: {
         margin: 0,
         paddingTop: 50,
         paddingBottom: 50,
         alignItems: 'center',
         width: 120,
     },
-    buttonOpacity: {
+    btnSubmit: {
         width: 120,
         padding: 14,
         paddingBottom: 5,
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFEFE',
         borderRadius: 20,
     },
-    buttonText1: {
+    txtSubmit: {
         fontSize: 16,
         color: 'black',
         textAlign: 'center',
@@ -213,19 +213,19 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         alignItems: 'center',
     },
-    btnCodeTH: {
+    btnCode: {
         padding: 14,
         paddingTop: 10,
         paddingHorizontal: 8,
         borderRadius: 20,
     },
-    btnCallTH: {
+    btnCall: {
         padding: 14,
         paddingTop: 10,
         paddingHorizontal: 8,
         borderRadius: 20,
     },
-    buttonText2: {
+    txtButton: {
         fontSize: 16,
         color: '#FFFEFE',
         textAlign: 'center',

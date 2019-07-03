@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Image } from "react-native";
 
 export default function Img(props) {
 
@@ -9,7 +9,7 @@ export default function Img(props) {
                 <View>
                     <Image
                         style={{ height: 37, width: 33 }}
-                        source={require('../../assets/images/kidnapped.png')}
+                        source={require('../assets/images/kidnapped.png')}
                     />
                 </View>
             )
@@ -19,7 +19,7 @@ export default function Img(props) {
                 <View>
                     <Image
                         style={{ height: 37, width: 33 }}
-                        source={require('../../assets/images/car-crash.png')}
+                        source={require('../assets/images/car-crash.png')}
                     />
                 </View>
             )
@@ -29,7 +29,7 @@ export default function Img(props) {
                 <View>
                     <Image
                         style={{ height: 37, width: 33 }}
-                        source={require('../../assets/images/fire.png')}
+                        source={require('../assets/images/fire.png')}
                     />
                 </View>
             )
@@ -39,7 +39,7 @@ export default function Img(props) {
                 <View>
                     <Image
                         style={{ height: 37, width: 33 }}
-                        source={require('../../assets/images/heart.png')}
+                        source={require('../assets/images/heart.png')}
                     />
                 </View>
             )
@@ -49,7 +49,7 @@ export default function Img(props) {
                 <View>
                     <Image
                         style={{ height: 37, width: 33 }}
-                        source={require('../../assets/images/hitting.png')}
+                        source={require('../assets/images/hitting.png')}
                     />
                 </View>
             )
@@ -59,7 +59,7 @@ export default function Img(props) {
                 <View>
                     <Image
                         style={{ height: 37, width: 33 }}
-                        source={require('../../assets/images/buglery.png')}
+                        source={require('../assets/images/buglery.png')}
                     />
                 </View>
             )
@@ -67,7 +67,7 @@ export default function Img(props) {
         default:
             <Image
                 style={{ height: 37, width: 33 }}
-                source={require('../../assets/images/man.png')}
+                source={require('../assets/images/man.png')}
             />
     }
 }

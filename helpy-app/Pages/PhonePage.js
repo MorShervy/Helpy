@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Picker, TextInput, ActivityIndicator } from "react-native";
 import { LinearGradient } from 'expo';
 import { NavigationActions } from 'react-navigation';
-import SQL from '../../Handlers/SQL';
-import PushNotification, { } from '../../Handlers/PushNotification';
-import LogoApp from '../General/LogoApp';
+import SQL from '../Handlers/SQL';
+import PushNotification from '../Handlers/PushNotification';
+import LogoApp from '../components/LogoApp';
 
 const CODE = '1111';
 const regexNum = /^[0-9]*$/;
@@ -126,7 +126,7 @@ export default class PhonePage extends Component {
                 >
                     <View style={styles.container}>
                         <LogoApp styles={[styles.logo, styles.image]} />
-                        <Text style={styles.header}>הזן מספר טלפון</Text>
+                        <Text style={styles.txtHeader}>הזן מספר טלפון</Text>
 
                         <View style={styles.form}>
 
@@ -135,7 +135,6 @@ export default class PhonePage extends Component {
                                     selectedValue={this.state.areaCode}
                                     mode='dropdown'
                                     style={styles.picker}
-                                    itemStyle={styles.itemPicker}
                                     onValueChange={(itemValue) =>
                                         this.setState({ areaCode: itemValue })
                                     }>
@@ -164,12 +163,12 @@ export default class PhonePage extends Component {
                         </View>
 
                         {this.state.loading ? <ActivityIndicator style={{ flex: 1, paddingTop: 70 }} size="large" color="#ff0000" /> :
-                            <View style={styles.buttonView}>
+                            <View style={styles.btnView}>
                                 <TouchableOpacity
-                                    style={styles.buttonOpacity}
+                                    style={styles.btnSubmit}
                                     disabled={this.state.flag ? false : true}
                                     onPress={this._handleRegisterAndLogin}>
-                                    <Text style={styles.buttonText}>המשך</Text>
+                                    <Text style={styles.txtSubmit}>המשך</Text>
                                 </TouchableOpacity >
                             </View>
                         }
@@ -187,7 +186,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    header: {
+    txtHeader: {
         paddingBottom: 20,
         paddingTop: 50,
         color: '#FFFEFE',
@@ -214,9 +213,6 @@ const styles = StyleSheet.create({
         height: 25,
         width: 100,
     },
-    itemPicker: {
-        textAlign: 'center',
-    },
     validInputView: {
         borderColor: '#FFFEFE',
         borderRadius: 20,
@@ -239,14 +235,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
         paddingHorizontal: 45,
     },
-    buttonView: {
+    btnView: {
         margin: 0,
         paddingTop: 50,
         paddingBottom: 50,
         alignItems: 'center',
         width: 120,
     },
-    buttonOpacity: {
+    btnSubmit: {
         width: 120,
         padding: 14,
         paddingBottom: 5,
@@ -254,7 +250,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFEFE',
         borderRadius: 20,
     },
-    buttonText: {
+    txtSubmit: {
         fontSize: 16,
         color: 'black',
         textAlign: 'center',

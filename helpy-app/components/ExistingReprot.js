@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import Img from './Img';
 
 const { width, height } = Dimensions.get("window");
@@ -15,7 +15,7 @@ export default function ExistingReport(props) {
                 <View style={styles.txtform}>
                     <Text style={styles.txtRight}>
                         {props.report.Info}{"\n"}
-                        {`${props.report.Date} ${props.report.Time}`}
+                        {`${props.report.Time.substring(0, 5)} ${props.report.Date.substring(0, 10)}`}
                     </Text>
                 </View>
                 <View style={styles.picform}>
@@ -59,7 +59,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     txtRight: {
-        fontSize: 10,
+        fontSize: 12,
+        fontWeight: 'bold',
         textAlign: 'right',
         paddingTop: 5,
         paddingHorizontal: 8,

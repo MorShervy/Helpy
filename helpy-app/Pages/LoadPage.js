@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { LinearGradient } from 'expo';
 
-import LogoApp from '../General/LogoApp';
+import LogoApp from '../components/LogoApp';
 
 export default class LoadPage extends Component {
 
@@ -27,9 +27,9 @@ export default class LoadPage extends Component {
 
             <View style={styles.btnView}>
               <TouchableOpacity
-                style={styles.btnTH}
+                style={styles.btnSubmit}
                 onPress={() => { this.props.navigation.navigate('PhonePage') }}>
-                <Text style={styles.submitText}>כניסה</Text>
+                <Text style={styles.txtSubmit}>כניסה</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     width: 120,
 
   },
-  btnTH: {
+  btnSubmit: {
     width: 120,
     paddingBottom: 5,
     paddingTop: 5,
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
 
   },
-  submitText: {
+  txtSubmit: {
     fontSize: 16,
     color: 'black',
     textAlign: 'center',

@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Image } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { LinearGradient } from 'expo';
 import { NavigationActions } from 'react-navigation';
 import RadioForm, { RadioButton, RadioButtonInput, RadioButtonLabel } from 'react-native-simple-radio-button';
 
-import MenuButton from '../General/MenuButton';
-import LogoApp from '../General/LogoApp';
+import MenuButton from '../components/MenuButton';
+import LogoApp from '../components/LogoApp';
+import Arrow from '../components/Arrow';
 
 export default class ReportType extends React.Component {
     constructor(props) {
@@ -53,6 +54,8 @@ export default class ReportType extends React.Component {
                     <View style={styles.container}>
                         <MenuButton />
                         <LogoApp styles={[styles.logo, styles.image]} />
+                        <Arrow handlePress={() => { this.props.navigation.navigate('MainApp') }} />
+
                         <Text style={styles.headerText}>בחר מצב חירום לדיווח</Text>
                         <View style={styles.component}>
                             <RadioForm formHorizontal={true} animation={true} >
@@ -95,14 +98,14 @@ export default class ReportType extends React.Component {
                             <View style={styles.picone}>
                                 <TouchableOpacity
                                     onPress={() => { this._handlePressReportType(5) }}>
-                                    <Image source={require('../../assets/images/hitting.png')}
+                                    <Image source={require('../assets/images/hitting.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.picone}>
                                 <TouchableOpacity
                                     onPress={() => { this._handlePressReportType(1) }}>
-                                    <Image source={require('../../assets/images/kidnapped.png')}
+                                    <Image source={require('../assets/images/kidnapped.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
                             </View>
@@ -110,7 +113,7 @@ export default class ReportType extends React.Component {
                                 <TouchableOpacity
                                     style={{ width: 101, height: 95 }}
                                     onPress={() => { this._handlePressReportType(6) }}>
-                                    <Image source={require('../../assets/images/buglery.png')}
+                                    <Image source={require('../assets/images/buglery.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
                             </View>
@@ -118,7 +121,7 @@ export default class ReportType extends React.Component {
                                 <TouchableOpacity
                                     style={{ width: 101, height: 95 }}
                                     onPress={() => { this._handlePressReportType(2) }}>
-                                    <Image source={require('../../assets/images/car-crash.png')}
+                                    <Image source={require('../assets/images/car-crash.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
                             </View>
@@ -126,7 +129,7 @@ export default class ReportType extends React.Component {
                                 <TouchableOpacity
                                     style={{ width: 101, height: 95 }}
                                     onPress={() => { this._handlePressReportType(4) }}>
-                                    <Image source={require('../../assets/images/heart.png')}
+                                    <Image source={require('../assets/images/heart.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
                             </View>
@@ -134,7 +137,7 @@ export default class ReportType extends React.Component {
                                 <TouchableOpacity
                                     style={{ width: 101, height: 95 }}
                                     onPress={() => { this._handlePressReportType(3) }}>
-                                    <Image source={require('../../assets/images/fire.png')}
+                                    <Image source={require('../assets/images/fire.png')}
                                         style={{ width: 101, height: 95 }} />
                                 </TouchableOpacity>
                             </View>

@@ -1,14 +1,16 @@
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo';
+import { StackActions, NavigationActions } from 'react-navigation';
 
-import MenuButton from '../General/MenuButton';
-import LogoApp from '../General/LogoApp'
+import MenuButton from '../components/MenuButton';
+import LogoApp from '../components/LogoApp'
+import Arrow from '../components/Arrow';
 
 export default class Chat extends React.Component {
     constructor(props) {
         super(props);
-
+        console.log('Chat param=', this.props.navigation.state.params)
     }
 
     render() {
@@ -27,6 +29,17 @@ export default class Chat extends React.Component {
                     <View style={styles.container}>
                         <MenuButton />
                         <LogoApp styles={[styles.logo, styles.image]} />
+                        <Arrow handlePress={() => {
+                            const userId = this.props.navigation.state.params;
+                            const replaceAction = StackActions.replace({
+                                index: 0,
+                                routeName: 'MainApp',
+                                actions: NavigationActions.navigate('MainApp'),
+                                params: userId,
+                            });
+                            this.props.navigation.dispatch(replaceAction)
+                        }} />
+
                         <Text style={styles.headerText}>צא'ט עם נציג</Text>
                     </View>
                     <View style={styles.chats}>
@@ -34,7 +47,7 @@ export default class Chat extends React.Component {
                         {/*  Representor */}
                         <View style={styles.chatContainer}>
                             <View style={styles.iconView}>
-                                <Image style={styles.iconRep} source={require('../../assets/images/chat.png')} />
+                                <Image style={styles.iconRep} source={require('../assets/images/chat.png')} />
                             </View>
                             <View style={styles.p}>
                                 <Text style={styles.chatText}>במה אוכל לעזור?</Text>
@@ -45,7 +58,7 @@ export default class Chat extends React.Component {
 
                         <View style={styles.chatContainers}>
                             <View style={styles.iconView}>
-                                <Image style={styles.iconCli} source={require('../../assets/images/man.png')} />
+                                <Image style={styles.iconCli} source={require('../assets/images/man.png')} />
                             </View>
                             <View style={styles.ps}>
                                 <Text style={styles.chatText}>הבן אדם התעלף</Text>
@@ -56,7 +69,7 @@ export default class Chat extends React.Component {
 
                         <View style={styles.chatContainer}>
                             <View style={styles.iconView}>
-                                <Image style={styles.iconRep} source={require('../../assets/images/chat.png')} />
+                                <Image style={styles.iconRep} source={require('../assets/images/chat.png')} />
                             </View>
 
                             <View style={styles.p}>
