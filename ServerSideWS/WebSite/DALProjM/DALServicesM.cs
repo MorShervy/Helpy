@@ -17,8 +17,7 @@ namespace DALProjM
         /// <summary>
         /// Statics Class Members
         /// </summary>
-        private static readonly double R_TO_CHECK = 1; //km
-        private static readonly double R = 6371; //km
+        
         private static string conStr = null;
         private static bool local = false;
         private static SqlConnection Con = null;
@@ -199,12 +198,9 @@ namespace DALProjM
         }
 
 
-        public static List<DailyReport> GetDailyReportsByLocation(string lat1, string lon1)
+        public static DataTable GetDailyReportsByLocation(string lat1, string lon1)
         {
-            List<DailyReport> report = null;
-            DataTable table = null;
 
-            double lat2, lon2;
             try
             {
                 Con.Open();
@@ -215,33 +211,10 @@ namespace DALProjM
 
                 DataSet ds = new DataSet();
                 _adtr.Fill(ds, "Report");
-                table = ds.Tables["Report"];
 
-
-                table = ds.Tables["Report"];
-                foreach (DataRow row in table.Rows)
-                {
-                    lat2 = double.Parse(row["Latitude"].ToString());
-                    lon2 = double.Parse(row["Longitude"].ToString());
-                    if (IsDiffBetweenTwoGivenPointsLessThanRadiusToCheck(double.Parse(lat1), double.Parse(lon1), lat2, lon2))
-                    {
-                        if (report == null)
-                            report = new List<DailyReport>();
-
-                        report.Add(new DailyReport()
-                        {
-                            ID = int.Parse(row["ReportID"].ToString()),
-                            TypeID = int.Parse(row["ReportTypeID"].ToString()),
-                            TypeName = row["TypeName"].ToString(),
-                            Date = row["ReportDate"].ToString(),
-                            Time = row["ReportTime"].ToString(),
-                            Latitude = lat2,
-                            Longitude = lon2,
-                            Info = row["ReportInfo"].ToString()
-                        });
-                    }
-                }
-                return report;
+                if (ds.Tables["Report"].Rows.Count != 0)
+                    return ds.Tables["Report"];
+                
             }
             catch (Exception e)
             {
@@ -252,23 +225,11 @@ namespace DALProjM
                 if (Con.State == ConnectionState.Open)
                     Con.Close();
             }
+            return null;
         }
 
 
-        private static bool IsDiffBetweenTwoGivenPointsLessThanRadiusToCheck(double lat1, double lon1, double lat2, double lon2)
-        {
-            double radLat1 = lat1 * Math.PI / 180;
-            double radLon1 = lon1 * Math.PI / 180;
-            double radLat2 = lat2 * Math.PI / 180;
-            double radLon2 = lon2 * Math.PI / 180;
-
-            double diff = Math.Acos(
-                            Math.Sin(radLat1) * Math.Sin(radLat2) +
-                            Math.Cos(radLat1) * Math.Cos(radLat2) *
-                            Math.Cos((radLon1) - (radLon2))) * R;
-
-            return diff <= R_TO_CHECK;
-        }
+       
 
         public static DataTable InsertReport(int userId, int reportTypeId, string reportDate, string reportTime, string lat, string lon, int isVictim, string reportInfo)
         {
@@ -305,6 +266,8 @@ namespace DALProjM
             }
             return null;
         }
+
+
 
         /**************************************** old *****************************************/
         /// <summary>
