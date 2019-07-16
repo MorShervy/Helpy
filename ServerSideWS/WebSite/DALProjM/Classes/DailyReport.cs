@@ -16,5 +16,8 @@ namespace DALProjM.Classes
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public string Info { get; set; }
+        public ReportStatus ReportStatus { get; set; }
+
     }
+
 }

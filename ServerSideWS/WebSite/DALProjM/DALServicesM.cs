@@ -17,7 +17,7 @@ namespace DALProjM
         /// <summary>
         /// Statics Class Members
         /// </summary>
-        
+
         private static string conStr = null;
         private static bool local = false;
         private static SqlConnection Con = null;
@@ -214,7 +214,7 @@ namespace DALProjM
 
                 if (ds.Tables["Report"].Rows.Count != 0)
                     return ds.Tables["Report"];
-                
+
             }
             catch (Exception e)
             {
@@ -229,7 +229,7 @@ namespace DALProjM
         }
 
 
-       
+
 
         public static DataTable InsertReport(int userId, int reportTypeId, string reportDate, string reportTime, string lat, string lon, int isVictim, string reportInfo)
         {
@@ -246,6 +246,7 @@ namespace DALProjM
                 _command.Parameters.Add(new SqlParameter("Longitude", lon));
                 _command.Parameters.Add(new SqlParameter("IsVictim", isVictim));
                 _command.Parameters.Add(new SqlParameter("ReportInfo", reportInfo));
+                _command.Parameters.Add(new SqlParameter("ReportStatus", ReportStatus.InProceses));
 
                 _adtr = new SqlDataAdapter(_command);
 
@@ -279,22 +280,33 @@ namespace DALProjM
         public static Admin AdminLogin(string username, string password)
         {
             Admin admin = null;
-            _command.CommandText = " select * " +
+            try
+            {
+                Con.Open();
+                _command = new SqlCommand(" select * " +
                                " from DTBAdmin " +
                                $" where AdminUserName='{username}' and " +
-                               $" AdminPassword='{password}'";
-            _command.Connection.Open();
-            SqlDataReader reader = _command.ExecuteReader();
-            if (reader.Read())
-            {
-                admin = new Admin()
+                               $" AdminPassword='{password}'", Con);
+                SqlDataReader reader = _command.ExecuteReader();
+                if (reader.Read())
                 {
-                    AdminID = (int)reader["AdminID"],
-                    AdminUserName = username,
-                    AdminPassword = password
-                };
+                    admin = new Admin()
+                    {
+                        AdminID = (int)reader["AdminID"],
+                        AdminUserName = username,
+                        AdminPassword = password
+                    };
+                }
             }
-            _command.Connection.Close();
+            catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+            finally
+            {
+                if (Con.State == ConnectionState.Open)
+                    Con.Close();
+            }
             return admin;
         }
 

@@ -1,4 +1,5 @@
 ﻿using BALProjM;
+using DALProjM;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,11 +67,11 @@ public class WSHelpyM : System.Web.Services.WebService
 
     /*     old       */
 
-    [WebMethod]
-    public string AdminLogin(string username, string password)
-    {
-        return BALServicesM.AdminLogin(username, password);
-    }
+    //[WebMethod]
+    //public object AdminLogin(string username, string password)
+    //{
+    //    return BALServicesM.AdminLogin(username, password);
+    //}
 
     [WebMethod]
     public string InsertAdmin(string username, string password)

@@ -146,7 +146,8 @@ namespace BALProjM
                         Time = row["ReportTime"].ToString(),
                         Latitude = lat2,
                         Longitude = lon2,
-                        Info = row["ReportInfo"].ToString()
+                        Info = row["ReportInfo"].ToString(),
+                        ReportStatus = (ReportStatus)Enum.Parse(typeof(ReportStatus),row["ReportStatus"].ToString()),
                     });
                 }
             }
@@ -192,7 +193,8 @@ namespace BALProjM
                     Latitude = result.Rows[0]["Latitude"].ToString(),
                     Longitude = result.Rows[0]["Longitude"].ToString(),
                     IsVictim = bool.Parse(result.Rows[0]["IsVictim"].ToString()),
-                    ReportInfo = result.Rows[0]["ReportInfo"].ToString()
+                    ReportInfo = result.Rows[0]["ReportInfo"].ToString(),
+                    ReportStatus = (ReportStatus)Enum.Parse(typeof(ReportStatus),result.Rows[0]["ReportStatus"].ToString()),
                 };
                 return new JavaScriptSerializer().Serialize(report);
             }
@@ -202,11 +204,11 @@ namespace BALProjM
 
 
 
-        public static string AdminLogin(string username, string password)
+        public static Admin AdminLogin(string username, string password)
         {
             Admin a = DALServicesM.AdminLogin(username, password);
 
-            return new JavaScriptSerializer().Serialize(a);
+            return a;
         }
 
         public static string InsertAdmin(string username, string password)

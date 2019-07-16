@@ -19,6 +19,13 @@ namespace DALProjM
         public string PictureSrc { get; set; }
         public string AudioSrc { get; set; }
         public string ReportInfo { get; set; }
+        public ReportStatus ReportStatus { get; set; }
+    }
 
+    public enum ReportStatus
+    {
+        InProceses = 1,
+        Recieved = 2,
+        Ended = 3
     }
 }
