@@ -6,6 +6,7 @@ import PhonePage from './Pages/PhonePage';
 import CodeVerification from './Pages/CodeVerification';
 import Regulations from './Pages/Regulations';
 import MainApp from './Pages/MainApp';
+import ReportsStatus from './Pages/ReportsStatus';
 import EventReport from './Pages/EventReport';
 import ReportType from './Pages/ReportType';
 import RealTime from './Pages/RealTime';
@@ -28,6 +29,7 @@ const AppNavigator = createStackNavigator({
   CodeVerification: CodeVerification,
   Regulations: Regulations,
   MainApp: MainApp,
+  ReportsStatus: ReportsStatus,
   ReportType: ReportType,
   EventReport: EventReport,
   RealTime: RealTime,

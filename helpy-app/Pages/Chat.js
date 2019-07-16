@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { StyleSheet, View, Text, Image, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo';
 import { StackActions, NavigationActions } from 'react-navigation';
 

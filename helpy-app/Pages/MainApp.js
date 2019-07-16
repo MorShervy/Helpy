@@ -25,23 +25,10 @@ class MainApp extends Component {
         }
     }
 
-
     componentWillMount = async () => {
         console.log('will mount')
         await this._getLocationAndUpdateMap();
     }
-
-    // shouldComponentUpdate = () => {
-
-    //     console.log('shouldUpdate?', this.state.update)
-
-    //     return this.state.update;
-    // }
-
-    // componentDidUpdate = async () => {
-    //     console.log('will update')
-    //     await this._getLocationAndUpdateMap();
-    // }
 
     _getLocationAndUpdateMap = async () => {
         console.log('userid=', this.state.userId)
@@ -52,15 +39,7 @@ class MainApp extends Component {
 
         const location = await Location.getCurrentPositionAsync({});
         //console.log(location);
-        this.setState({ location }, async () => {
-            if (this.state.location) {
-                //let reverseGC = await Location.reverseGeocodeAsync(this.state.location.coords);
-                //console.log('reversGC=', reverseGC)
-                //this.setState({ reverseGC: reverseGC });
-            } else {
-                alert('You must push the Location button first in order to get the location before you can get the reverse geocode for the latitude and longitude!');
-            }
-        });
+        this.setState({ location });
 
         const Report = await SQL.GetDailyReportsByLocation(this.state.location.coords.latitude, this.state.location.coords.longitude);
 
@@ -78,6 +57,14 @@ class MainApp extends Component {
         const navigateAction = NavigationActions.navigate({
             routeName: 'ReportType',
             params: this.state.userId,
+        });
+        this.props.navigation.dispatch(navigateAction)
+    }
+
+    _handleStatusBtn = () => {
+        const navigateAction = NavigationActions.navigate({
+            routeName: 'ReportsStatus',
+            params: this.state.report,
         });
         this.props.navigation.dispatch(navigateAction)
     }
@@ -133,7 +120,14 @@ class MainApp extends Component {
                 >
                     <MenuButton />
                     <LogoApp styles={[styles.logo, styles.image]} />
-                    <StatusBtn />
+                    <View style={styles.StatusView}>
+                        <TouchableOpacity
+                            style={styles.btnStatus}
+                            onPress={this._handleStatusBtn}
+                        >
+                            <Text style={styles.txtStatusReport}>מצב דיווח</Text>
+                        </TouchableOpacity >
+                    </View>
 
 
                     <View style={styles.view}>
@@ -227,5 +221,26 @@ const styles = StyleSheet.create({
         fontSize: 24,
         textAlign: 'center',
     },
+    StatusView: {
+        width: 120,
+        zIndex: 9,
+        position: 'absolute',
+        top: 55,
+        left: 20,
+    },
+    btnStatus: {
+        width: 120,
+        padding: 14,
+        paddingBottom: 5,
+        paddingTop: 5,
+        backgroundColor: '#fff',
+        borderRadius: 20,
+    },
+    txtStatusReport: {
+        fontSize: 12,
+        color: 'black',
+        fontWeight: 'bold',
+        textAlign: 'center',
+    }
 });
 

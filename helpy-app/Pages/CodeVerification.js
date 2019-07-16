@@ -2,11 +2,10 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import { LinearGradient } from 'expo';
 import { NavigationActions } from 'react-navigation';
-import PushNotification from '../Handlers/PushNotification';
+
 import SQL from '../Handlers/SQL';
 import LogoApp from '../components/LogoApp';
 
-const CODE = '1111';
 const regexNum = /^[0-9]*$/;
 export default class CodeVerification extends Component {
     constructor(props) {

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, TextInput, ActivityIndicator, Image } from "react-native";
 import { LinearGradient, Location, Permissions } from 'expo';
-import { StackActions, NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 
 import SQL from '../Handlers/SQL';
 import MenuButton from '../components/MenuButton';
@@ -25,7 +25,7 @@ export default class EventReports extends Component {
         }
 
         const location = await Location.getCurrentPositionAsync({});
-        //console.log(location);
+        console.log(location);
         this.setState({ location });
     }
 
@@ -34,12 +34,12 @@ export default class EventReports extends Component {
         // insert report
         const { userId, reportTypeId, isVictim } = this.props.navigation.state.params;
         const location = this.state.location.coords;
-        const reportInfo = this.state.reportInfo;
+        const reportInfo = this.state.reportInfo !== '' ? this.state.reportInfo : "אין מידע זמין";
         const reportDate = d.toLocaleDateString();
         const reportTime = d.toTimeString().substring(0, 8);
 
         const res = await SQL.InsertReport(userId, reportTypeId, reportDate, reportTime, location.latitude, location.longitude, isVictim, reportInfo);
-        const report = JSON.parse(res);
+        //const report = JSON.parse(res);
         // if (report.ReportID !== undefined)
         //     console.log('report=', report)
 
